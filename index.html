@@ -1,0 +1,2210 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Etsy Seller Pro — Master Ürün Stüdyosu</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <!-- Lucide Icons Library for consistent UI icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    code, pre { font-family: 'JetBrains Mono', monospace; }
+
+    /* Canvas background */
+    .studio-canvas-bg {
+      background-color: #F8FAFC;
+      background-image: radial-gradient(#CBD5E1 1.3px, transparent 1.3px);
+      background-size: 22px 22px;
+    }
+
+    /* iPhone Frame Mockup */
+    .phone-mockup {
+      width: 350px;
+      height: 710px;
+      border-radius: 46px;
+      border: 9px solid #0F172A;
+      box-shadow: 0 25px 60px -15px rgba(15, 23, 42, 0.22), 0 0 0 1px rgba(15, 23, 42, 0.08);
+      background: #FFFFFF;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Left Sidebar Page Navigation Items */
+    .sidebar-page-item {
+      transition: all 0.15s ease;
+    }
+    .sidebar-page-item.active {
+      background-color: #0F172A;
+      color: #FFFFFF;
+      box-shadow: 0 4px 12px -2px rgba(15, 23, 42, 0.25);
+    }
+    .sidebar-page-item.active .dot-indicator {
+      box-shadow: 0 0 8px 1px currentColor;
+    }
+
+    /* Step Sub-Card (Inside Page 1) */
+    .step-card {
+      transition: all 0.15s ease;
+    }
+    .step-card.active {
+      border-color: #EA580C !important;
+      background-color: #FFF7ED !important;
+      box-shadow: 0 4px 12px -2px rgba(234, 88, 12, 0.18);
+    }
+    .step-card.active .step-num-badge {
+      background-color: #EA580C !important;
+      color: #FFFFFF !important;
+    }
+
+    /* Automake Node Card */
+    .automake-node {
+      transition: box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1), transform 0.15s ease, border-color 0.2s ease;
+      box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.06), 0 4px 10px -2px rgba(15, 23, 42, 0.03);
+    }
+    .automake-node:hover {
+      box-shadow: 0 20px 35px -10px rgba(99, 102, 241, 0.14), 0 0 0 1.5px #6366F1;
+    }
+    .automake-node.active {
+      box-shadow: 0 0 0 2.5px #6366F1, 0 22px 40px -10px rgba(99, 102, 241, 0.24);
+      border-color: #6366F1 !important;
+    }
+
+    /* Animated Bezier wire */
+    @keyframes pulseFlow {
+      0% { stroke-dashoffset: 28; }
+      100% { stroke-dashoffset: 0; }
+    }
+    .animated-wire {
+      stroke-dasharray: 7 7;
+      animation: pulseFlow 1.2s linear infinite;
+    }
+
+    /* Kanban Drag & Drop Styles */
+    .kanban-col { min-height: 560px; }
+    .drag-over { background-color: rgba(99, 102, 241, 0.06); border: 2px dashed #6366F1 !important; }
+
+    /* Right Spec Sub-tab */
+    .spec-tab-btn.active {
+      background-color: #EA580C;
+      color: #FFFFFF;
+      box-shadow: 0 2px 8px -1px rgba(234, 88, 12, 0.35);
+    }
+
+    /* Flow connector line */
+    .flow-connector-line {
+      position: absolute;
+      left: 17px;
+      top: 36px;
+      bottom: -16px;
+      width: 2px;
+      background: #E2E8F0;
+    }
+
+    /* Custom scrollbars */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased h-screen flex overflow-hidden select-none">
+
+  <!-- ========================================================================= -->
+  <!-- COLLAPSIBLE MAIN SIDEBAR (EKRANLAR, KARTLAR, FLOW)                       -->
+  <!-- ========================================================================= -->
+  <aside id="mainSidebar" class="w-64 bg-white border-r border-slate-200/90 flex flex-col z-30 flex-shrink-0 transition-all duration-300 ease-in-out shadow-xs justify-between">
+    
+    <div>
+      <!-- Workspace Brand & Collapse Toggle -->
+      <div class="h-14 px-4 border-b border-slate-100 flex items-center justify-between">
+        <div class="flex items-center space-x-2.5 overflow-hidden">
+          <div class="w-8 h-8 rounded-xl bg-orange-600 flex items-center justify-center text-white font-extrabold text-sm shadow-xs shadow-orange-600/30 flex-shrink-0">
+            E
+          </div>
+          <div class="overflow-hidden">
+            <h1 class="text-xs font-black text-slate-900 tracking-tight truncate">Acme Inc. / Etsy</h1>
+            <p class="text-[10px] text-slate-400 font-medium truncate">Seller Pro Studio</p>
+          </div>
+        </div>
+        <button id="btnToggleSidebar" title="Kenar Çubuğunu Gizle" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition">
+          <i data-lucide="chevron-left" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Main Navigation Menu: 3 DISTINCT PAGES -->
+      <div class="p-3.5 space-y-2">
+        <div class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider px-3 mb-1">ANA ÇALIŞMA SAYFALARI</div>
+
+        <!-- SAYFA 1: EKRANLAR (MOBİL PROTOTİP) -->
+        <button onclick="goToPage('page1')" id="sidebarBtn-page1" class="sidebar-page-item active w-full text-left p-3 rounded-2xl flex items-center space-x-3 group border border-transparent">
+          <div class="w-8 h-8 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center flex-shrink-0 shadow-2xs group-hover:scale-105 transition">
+            <i data-lucide="smartphone" class="w-4 h-4"></i>
+          </div>
+          <div class="flex-1 overflow-hidden">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold leading-tight">Ekranlar</span>
+              <span class="dot-indicator w-2 h-2 rounded-full bg-orange-500 text-orange-400"></span>
+            </div>
+            <p class="text-[10px] text-slate-400 truncate mt-0.5">Mobil prototip & şartname</p>
+          </div>
+        </button>
+
+        <!-- SAYFA 2: KARTLAR (TRELLO PANOSU) -->
+        <button onclick="goToPage('page2')" id="sidebarBtn-page2" class="sidebar-page-item w-full text-left p-3 rounded-2xl flex items-center space-x-3 group border border-transparent text-slate-600 hover:bg-slate-100 hover:text-slate-900">
+          <div class="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0 shadow-2xs group-hover:scale-105 transition">
+            <i data-lucide="trello" class="w-4 h-4"></i>
+          </div>
+          <div class="flex-1 overflow-hidden">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold leading-tight">Kartlar</span>
+              <span class="dot-indicator w-2 h-2 rounded-full bg-blue-500 text-blue-400"></span>
+            </div>
+            <p class="text-[10px] text-slate-400 truncate mt-0.5">İşin detayları & yapılacaklar listesi</p>
+          </div>
+        </button>
+
+        <!-- SAYFA 3: FLOW (AUTOMAKE DÜĞÜM AKIŞI) -->
+        <button onclick="goToPage('page3')" id="sidebarBtn-page3" class="sidebar-page-item w-full text-left p-3 rounded-2xl flex items-center space-x-3 group border border-transparent text-slate-600 hover:bg-slate-100 hover:text-slate-900">
+          <div class="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center flex-shrink-0 shadow-2xs group-hover:scale-105 transition">
+            <i data-lucide="git-branch" class="w-4 h-4"></i>
+          </div>
+          <div class="flex-1 overflow-hidden">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold leading-tight">Flow</span>
+              <span class="dot-indicator w-2 h-2 rounded-full bg-indigo-500 text-indigo-400"></span>
+            </div>
+            <p class="text-[10px] text-slate-400 truncate mt-0.5">Tüm otomasyon düğüm tuvali</p>
+          </div>
+        </button>
+      </div>
+
+      <!-- Quick Info Box inside Sidebar -->
+      <div class="px-3.5 mt-2">
+        <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-3 text-[11px] text-slate-600 space-y-1.5">
+          <div class="font-bold text-slate-900 flex items-center space-x-1.5">
+            <i data-lucide="lightbulb" class="w-3.5 h-3.5 text-amber-500"></i>
+            <span>Hızlı İpucu</span>
+          </div>
+          <p class="leading-relaxed text-slate-500 text-[10px]">
+            Sol menüden sayfaları değiştirip projeyi farklı açılardan (Kullanıcı, Geliştirici, Sistem Akışı) inceleyebilirsiniz.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Profile & Download -->
+    <div class="p-3.5 border-t border-slate-100 bg-slate-50/60 space-y-2">
+      <button id="btnDownloadHtml" title="Bilgisayara İndir" class="w-full py-2.5 px-3 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl transition shadow-2xs flex items-center justify-center space-x-2">
+        <i data-lucide="download" class="w-3.5 h-3.5 text-orange-400"></i>
+        <span>İndir (.HTML)</span>
+      </button>
+
+      <div class="flex items-center space-x-2.5 px-2 pt-1">
+        <div class="w-7 h-7 rounded-full bg-gradient-to-tr from-orange-600 to-amber-500 text-white font-bold text-[10px] flex items-center justify-center">
+          BK
+        </div>
+        <div class="overflow-hidden">
+          <div class="text-xs font-bold text-slate-800 truncate">Burak K.</div>
+          <div class="text-[10px] text-slate-400 truncate">Etsy Seller Pro</div>
+        </div>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- Expand Sidebar Button (Visible when sidebar collapsed) -->
+  <button id="btnExpandSidebar" title="Menüyü Göster" class="fixed top-3 left-3 z-40 p-2 rounded-xl bg-white border border-slate-200 text-slate-600 shadow-md hover:bg-slate-50 transition hidden">
+    <i data-lucide="menu" class="w-4 h-4"></i>
+  </button>
+
+  <!-- ========================================================================= -->
+  <!-- MAIN WORKSPACE VIEWPORTS CONTAINER (PAGE 1 / PAGE 2 / PAGE 3)             -->
+  <!-- ========================================================================= -->
+  <div class="flex-1 flex flex-col overflow-hidden">
+
+    <!-- ========================================================================= -->
+    <!-- SAYFA 1: EKRANLAR (3 SÜTUNLU MOBİL EKRANLAR, CANLI TELEFON & ŞARTNAME)   -->
+    <!-- ========================================================================= -->
+    <section id="view-page1" class="flex-1 flex overflow-hidden">
+
+      <!-- SUB-COLUMN 1 (LEFT): SAYFA LİSTESİ -->
+      <aside class="w-64 sm:w-72 bg-white border-r border-slate-200/90 flex flex-col z-20 flex-shrink-0 overflow-hidden">
+        <div class="p-4 border-b border-slate-100 flex-shrink-0 bg-slate-50/50">
+          <span class="px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wider bg-orange-100 text-orange-700 rounded">ADIM ADIM MVP AKIŞI</span>
+          <h2 class="text-sm font-extrabold text-slate-900 mt-1">Mobil Kullanıcı Senaryosu</h2>
+          <p class="text-[11px] text-slate-500 mt-0.5 leading-relaxed">
+            İncelemek istediğiniz ekrana tıklayın; telefon ve sağdaki akış detayları anında o ekrana geçer.
+          </p>
+        </div>
+
+        <div class="flex-1 overflow-y-auto p-3.5 space-y-2">
+          <div class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider px-1 pt-1">BAŞLANGIÇ & GİRİŞ (ONBOARDING)</div>
+
+          <button onclick="selectScreen('splash')" id="stepBtn-splash" class="step-card w-full text-left p-3 rounded-2xl border border-slate-200/90 bg-white hover:bg-slate-50 transition flex items-start space-x-3">
+            <span class="step-num-badge w-6 h-6 rounded-lg bg-slate-100 text-slate-700 font-extrabold text-xs flex items-center justify-center flex-shrink-0 mt-0.5">1</span>
+            <div class="flex-1 overflow-hidden">
+              <div class="text-xs font-extrabold text-slate-900">Splash Screen (Açılış)</div>
+              <div class="text-[11px] text-slate-500 leading-snug mt-0.5">Logo, 3 maddelik değer önerisi ve başlangıç</div>
+            </div>
+          </button>
+
+          <button onclick="selectScreen('auth')" id="stepBtn-auth" class="step-card w-full text-left p-3 rounded-2xl border border-slate-200/90 bg-white hover:bg-slate-50 transition flex items-start space-x-3">
+            <span class="step-num-badge w-6 h-6 rounded-lg bg-slate-100 text-slate-700 font-extrabold text-xs flex items-center justify-center flex-shrink-0 mt-0.5">2</span>
+            <div class="flex-1 overflow-hidden">
+              <div class="text-xs font-extrabold text-slate-900">Giriş Yap / Kayıt Ol</div>
+              <div class="text-[11px] text-slate-500 leading-snug mt-0.5">Google/Apple/Email + Resmi Etsy OAuth</div>
+            </div>
+          </button>
+
+          <div class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider px-1 pt-3">4 ANA SAYFA (BOTTOM BAR)</div>
+
+          <button onclick="selectScreen('home')" id="stepBtn-home" class="step-card w-full text-left p-3 rounded-2xl border border-slate-200/90 bg-white hover:bg-slate-50 transition flex items-start space-x-3 active">
+            <span class="step-num-badge w-6 h-6 rounded-lg bg-orange-600 text-white font-extrabold text-xs flex items-center justify-center flex-shrink-0 mt-0.5">3</span>
+            <div class="flex-1 overflow-hidden">
+              <div class="text-xs font-extrabold text-slate-900">Sayfa 1: Ana Sayfa (Kokpit)</div>
+              <div class="text-[11px] text-slate-500 leading-snug mt-0.5">Toplam ciro, acil kargolar, mağaza filtresi</div>
+            </div>
+          </button>
+
+          <button onclick="selectScreen('shops')" id="stepBtn-shops" class="step-card w-full text-left p-3 rounded-2xl border border-slate-200/90 bg-white hover:bg-slate-50 transition flex items-start space-x-3">
+            <span class="step-num-badge w-6 h-6 rounded-lg bg-slate-100 text-slate-700 font-extrabold text-xs flex items-center justify-center flex-shrink-0 mt-0.5">4</span>
+            <div class="flex-1 overflow-hidden">
+              <div class="text-xs font-extrabold text-slate-900">Sayfa 2: Mağazalarım</div>
+              <div class="text-[11px] text-slate-500 leading-snug mt-0.5">Bağlı dükkanlar, cirolar, yeni mağaza bağla</div>
+            </div>
+          </button>
+
+          <button onclick="selectScreen('studio')" id="stepBtn-studio" class="step-card w-full text-left p-3 rounded-2xl border border-slate-200/90 bg-white hover:bg-slate-50 transition flex items-start space-x-3">
+            <span class="step-num-badge w-6 h-6 rounded-lg bg-slate-100 text-slate-700 font-extrabold text-xs flex items-center justify-center flex-shrink-0 mt-0.5">5</span>
+            <div class="flex-1 overflow-hidden">
+              <div class="flex items-center space-x-1">
+                <span class="text-xs font-extrabold text-slate-900">Sayfa 3: AI İlan Stüdyosu</span>
+                <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-500"></i>
+              </div>
+              <div class="text-[11px] text-slate-500 leading-snug mt-0.5">Fotoğraf çek -> AI 13 Etiket & Başlık -> Taslak</div>
+            </div>
+          </button>
+
+          <button onclick="selectScreen('profile')" id="stepBtn-profile" class="step-card w-full text-left p-3 rounded-2xl border border-slate-200/90 bg-white hover:bg-slate-50 transition flex items-start space-x-3">
+            <span class="step-num-badge w-6 h-6 rounded-lg bg-slate-100 text-slate-700 font-extrabold text-xs flex items-center justify-center flex-shrink-0 mt-0.5">6</span>
+            <div class="flex-1 overflow-hidden">
+              <div class="text-xs font-extrabold text-slate-900">Sayfa 4: Profil & Ayarlar</div>
+              <div class="text-[11px] text-slate-500 leading-snug mt-0.5">AI ilan kredisi, Pro paket, bildirim tercihleri</div>
+            </div>
+          </button>
+        </div>
+
+        <div class="p-3 border-t border-slate-100 bg-slate-50/70 text-center">
+          <span class="text-[10px] text-slate-500 font-semibold">6 Ekranlı Çekirdek MVP Mimarisi</span>
+        </div>
+      </aside>
+
+      <!-- SUB-COLUMN 2 (CENTER): CANLI TIKLANABİLİR TELEFON EKRANI -->
+      <div class="flex-1 studio-canvas-bg flex flex-col items-center justify-center p-4 overflow-y-auto relative z-10">
+        <div class="phone-mockup">
+          <div class="h-8 bg-white flex items-center justify-between px-6 pt-1.5 flex-shrink-0 z-20">
+            <span class="text-[11px] font-bold text-slate-900">09:41</span>
+            <div class="w-20 h-4 bg-slate-900 rounded-full"></div>
+            <div class="flex items-center space-x-1.5 text-slate-900">
+              <span class="text-[10px] font-bold">5G</span>
+              <div class="w-4 h-2.5 border border-slate-900 rounded-xs p-0.5"><div class="w-full h-full bg-slate-900"></div></div>
+            </div>
+          </div>
+
+          <div id="phoneContent" class="flex-1 overflow-y-auto bg-slate-50 relative flex flex-col"></div>
+
+          <div id="phoneBottomBar" class="h-16 bg-white border-t border-slate-200 grid grid-cols-4 items-center px-1 flex-shrink-0 z-20">
+            <button onclick="selectScreen('home')" id="nav-btn-home" class="flex flex-col items-center justify-center py-1 text-orange-600">
+              <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+              <span class="text-[10px] font-bold mt-1">Ana Sayfa</span>
+            </button>
+            <button onclick="selectScreen('shops')" id="nav-btn-shops" class="flex flex-col items-center justify-center py-1 text-slate-400 hover:text-slate-700">
+              <i data-lucide="store" class="w-4 h-4"></i>
+              <span class="text-[10px] font-bold mt-1">Mağazalar</span>
+            </button>
+            <button onclick="selectScreen('studio')" id="nav-btn-studio" class="flex flex-col items-center justify-center py-1 text-slate-400 hover:text-slate-700">
+              <i data-lucide="camera" class="w-4 h-4"></i>
+              <span class="text-[10px] font-bold mt-1">AI Stüdyo</span>
+            </button>
+            <button onclick="selectScreen('profile')" id="nav-btn-profile" class="flex flex-col items-center justify-center py-1 text-slate-400 hover:text-slate-700">
+              <i data-lucide="user" class="w-4 h-4"></i>
+              <span class="text-[10px] font-bold mt-1">Profil</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="mt-2 text-center">
+          <span class="text-[11px] text-slate-400">💡 Telefondaki butonlara doğrudan tıklayarak ekranları gezebilirsiniz.</span>
+        </div>
+      </div>
+
+      <!-- SUB-COLUMN 3 (RIGHT): 4 SEKME (AKIŞ, ŞARTNAME, KARAR/ANALİZ, TRELLO KARTLARI) -->
+      <main class="w-full lg:w-[460px] xl:w-[500px] bg-white border-l border-slate-200/90 flex flex-col z-20 flex-shrink-0 overflow-hidden shadow-xs">
+        <div class="p-4 border-b border-slate-100 flex-shrink-0 bg-slate-50/50">
+          <div class="flex items-center justify-between">
+            <span id="specStepBadge" class="text-[10px] font-extrabold uppercase tracking-wider text-orange-600 font-mono">EKRAN 3 / 6</span>
+            <span id="specScopeBadge" class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-emerald-50 text-emerald-700 border border-emerald-200">MVP ÇEKİRDEK</span>
+          </div>
+          <h2 id="specScreenTitle" class="text-base font-black text-slate-900 mt-0.5">Ana Sayfa (Birleşik Kokpit)</h2>
+
+          <!-- 4 Sub-Tabs -->
+          <div class="grid grid-cols-4 p-1 bg-slate-200/70 rounded-xl mt-3 text-xs font-bold gap-1">
+            <button onclick="setSpecTab('flow')" id="tabBtn-flow" class="spec-tab-btn py-1.5 rounded-lg active text-center text-[11px]">
+              ⚡ Akış
+            </button>
+            <button onclick="setSpecTab('guide')" id="tabBtn-guide" class="spec-tab-btn py-1.5 rounded-lg text-slate-600 hover:text-slate-900 text-center text-[11px]">
+              📋 Şartname
+            </button>
+            <button onclick="setSpecTab('decisions')" id="tabBtn-decisions" class="spec-tab-btn py-1.5 rounded-lg text-slate-600 hover:text-slate-900 text-center text-[11px]">
+              ⚖️ Karar
+            </button>
+            <button onclick="setSpecTab('trello')" id="tabBtn-trello" class="spec-tab-btn py-1.5 rounded-lg text-slate-600 hover:text-slate-900 text-center text-[11px]">
+              📌 Kartlar
+            </button>
+          </div>
+        </div>
+
+        <div class="flex-1 overflow-y-auto p-5 space-y-5">
+          <!-- TAB 1: FLOW -->
+          <div id="tabContent-flow" class="space-y-4">
+            <div class="bg-indigo-50/60 border border-indigo-200/80 rounded-2xl p-4">
+              <span class="text-[10px] font-black text-indigo-700 uppercase tracking-wider block mb-1">Uçtan Uca Veri & İşlem Akışı</span>
+              <p id="specFlowSummary" class="text-xs text-indigo-950 leading-relaxed font-medium"></p>
+            </div>
+            <div id="specFlowStepsContainer" class="space-y-3 relative pl-2"></div>
+          </div>
+
+          <!-- TAB 2: ŞARTNAME -->
+          <div id="tabContent-guide" class="space-y-4 hidden">
+            <div class="bg-orange-50/60 border border-orange-200/70 rounded-2xl p-4">
+              <h3 class="text-xs font-extrabold uppercase tracking-wider text-orange-800 mb-1 flex items-center">
+                <i data-lucide="info" class="w-4 h-4 mr-1 text-orange-600"></i>
+                Kullanıcı Bu Ekranda Ne Yapar?
+              </h3>
+              <p id="specUserGoal" class="text-xs text-slate-700 leading-relaxed font-medium"></p>
+            </div>
+            <div>
+              <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-700 mb-2 flex items-center">
+                <i data-lucide="layout-grid" class="w-4 h-4 mr-1 text-indigo-600"></i>
+                Ekranda Yer Alan Bileşenler
+              </h3>
+              <div class="border border-slate-200 rounded-xl overflow-hidden shadow-2xs">
+                <table class="w-full text-left text-xs border-collapse">
+                  <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold text-[10px] uppercase">
+                    <tr><th class="p-2.5 w-1/3">Bileşen</th><th class="p-2.5 w-2/3">Açıklama & Tıklama Davranışı</th></tr>
+                  </thead>
+                  <tbody id="specComponentsTable" class="divide-y divide-slate-100 text-slate-700"></tbody>
+                </table>
+              </div>
+            </div>
+            <div>
+              <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-700 mb-2 flex items-center">
+                <i data-lucide="code" class="w-4 h-4 mr-1 text-slate-600"></i>
+                Arka Planda Ne Olur? (Teknik & API)
+              </h3>
+              <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-2 text-xs">
+                <div id="specEndpoint" class="font-mono text-[11px] bg-slate-900 text-emerald-400 p-2 rounded-lg break-all"></div>
+                <p id="specApiNotes" class="text-slate-600 leading-relaxed text-[11px]"></p>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 3: KARARLAR & ANALİZ -->
+          <div id="tabContent-decisions" class="space-y-4 hidden">
+            <div class="bg-indigo-50/70 border border-indigo-200/90 rounded-2xl p-4 space-y-2">
+              <h3 class="text-xs font-black text-indigo-950 uppercase tracking-wider flex items-center">
+                <span class="w-4 h-4 rounded-full bg-indigo-600 text-white flex items-center justify-center text-[10px] font-bold mr-1.5">💡</span>
+                Sayfa Analizi & İyileştirilecek Alanlar
+              </h3>
+              <ul id="specImprovementsList" class="text-xs text-indigo-950 space-y-1.5 list-disc pl-5 leading-relaxed font-medium"></ul>
+            </div>
+            <div class="bg-emerald-50/70 border border-emerald-200/90 rounded-2xl p-4 space-y-2">
+              <h3 class="text-xs font-black text-emerald-900 uppercase tracking-wider flex items-center">
+                <span class="w-4 h-4 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[10px] font-bold mr-1.5">✓</span>
+                Neler Yapılabilir & Yapılmalı (Do's)
+              </h3>
+              <ul id="specDosList" class="text-xs text-emerald-950 space-y-1.5 list-disc pl-5 leading-relaxed font-medium"></ul>
+            </div>
+            <div class="bg-rose-50/70 border border-rose-200/90 rounded-2xl p-4 space-y-2">
+              <h3 class="text-xs font-black text-rose-900 uppercase tracking-wider flex items-center">
+                <span class="w-4 h-4 rounded-full bg-rose-600 text-white flex items-center justify-center text-[10px] font-bold mr-1.5">✕</span>
+                Neler Yapılamaz & Yapılmamalı (Don'ts)
+              </h3>
+              <ul id="specDontsList" class="text-xs text-rose-950 space-y-1.5 list-disc pl-5 leading-relaxed font-medium"></ul>
+            </div>
+            <div class="bg-amber-50/70 border border-amber-200/90 rounded-2xl p-4 space-y-2">
+              <h3 class="text-xs font-black text-amber-900 uppercase tracking-wider flex items-center">
+                <span class="w-4 h-4 rounded-full bg-amber-500 text-white flex items-center justify-center text-[10px] font-bold mr-1.5">⚠️</span>
+                Olası Caseler & Uç Durum Kalkanları
+              </h3>
+              <div id="specCasesContainer" class="space-y-2 text-xs text-amber-950"></div>
+            </div>
+          </div>
+
+          <!-- TAB 4: TRELLO KARTLARI -->
+          <div id="tabContent-trello" class="space-y-4 hidden">
+            <div class="bg-slate-900 text-white rounded-2xl p-4 flex items-center justify-between shadow-md">
+              <div>
+                <span class="text-[10px] font-bold text-orange-400 uppercase tracking-wider">GELİŞTİRME YOL HARİTASI</span>
+                <h3 class="text-xs font-black">Bu Ekran İçin Gerekli Trello Kartları</h3>
+              </div>
+              <span id="specTrelloCountBadge" class="px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-white/10">3 Görev</span>
+            </div>
+            <div id="specTrelloCardsContainer" class="space-y-3"></div>
+          </div>
+        </div>
+      </main>
+
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- SAYFA 2: KARTLAR (TRELLO PANOSU)                                         -->
+    <!-- ========================================================================= -->
+    <section id="view-page2" class="flex-1 flex flex-col overflow-hidden hidden">
+      
+      <!-- Page 2 Sub-Header -->
+      <div class="bg-white border-b border-slate-200 px-6 py-3 flex flex-wrap items-center justify-between gap-3 flex-shrink-0">
+        <div>
+          <div class="flex items-center space-x-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-blue-600"></span>
+            <h2 class="text-base font-extrabold text-slate-900">Kartlar & Yapılacaklar Listesi</h2>
+            <span class="px-2.5 py-0.5 text-[10px] font-extrabold rounded-full bg-blue-50 text-blue-700 border border-blue-200">18 Görev Kartı</span>
+          </div>
+          <p class="text-xs text-slate-500 mt-0.5">Projenin tüm geliştirme, tasarım ve entegrasyon görevlerinin 4 sütunlu Kanban takip masası.</p>
+        </div>
+
+        <div class="flex items-center space-x-3">
+          <div class="inline-flex p-1 bg-slate-100 rounded-xl border border-slate-200 text-xs font-bold">
+            <button onclick="filterKanban('ALL')" id="filterBtn-ALL" class="kanban-phase-btn px-3 py-1 rounded-lg transition bg-white text-slate-900 shadow-2xs">Tümü (18)</button>
+            <button onclick="filterKanban('proto')" id="filterBtn-proto" class="kanban-phase-btn px-3 py-1 rounded-lg transition text-orange-700 hover:text-slate-900">🎨 1. Mobil Prototip</button>
+            <button onclick="filterKanban('mvp')" id="filterBtn-mvp" class="kanban-phase-btn px-3 py-1 rounded-lg transition text-emerald-700 hover:text-slate-900">🚀 2. Çalışan MVP</button>
+            <button onclick="filterKanban('v2')" id="filterBtn-v2" class="kanban-phase-btn px-3 py-1 rounded-lg transition text-indigo-700 hover:text-slate-900">🌟 3. Full Sürüm (V2)</button>
+          </div>
+
+          <input type="text" id="kanbanSearchInput" placeholder="Görev ara..." class="text-xs px-3 py-1.5 bg-slate-100 border border-slate-200 rounded-xl focus:outline-none focus:bg-white focus:border-blue-500 w-48">
+          
+          <button onclick="openCardModal()" class="inline-flex items-center px-3.5 py-1.5 text-xs font-bold rounded-xl bg-blue-600 hover:bg-blue-700 text-white transition shadow-2xs">
+            + Yeni Görev Ekle
+          </button>
+        </div>
+      </div>
+
+      <!-- 4-Column Trello Grid -->
+      <div class="flex-1 overflow-x-auto p-6 bg-slate-50">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-5 min-w-[1050px] max-w-7xl mx-auto h-full">
+          <div class="flex flex-col bg-slate-100/90 rounded-2xl p-3.5 border border-slate-200/80 shadow-2xs">
+            <div class="flex items-center justify-between pb-3 px-1 border-b border-slate-200">
+              <span class="text-xs font-extrabold uppercase tracking-wider text-slate-700">1. Özellik Havuzu (Backlog)</span>
+              <span id="count-backlog" class="text-xs font-bold px-2 py-0.5 rounded-full bg-slate-200 text-slate-700">0</span>
+            </div>
+            <div id="col-backlog" data-col="backlog" class="kanban-col flex-1 py-3 space-y-3 overflow-y-auto"></div>
+          </div>
+
+          <div class="flex flex-col bg-slate-100/90 rounded-2xl p-3.5 border border-slate-200/80 shadow-2xs">
+            <div class="flex items-center justify-between pb-3 px-1 border-b border-slate-200">
+              <span class="text-xs font-extrabold uppercase tracking-wider text-slate-700">2. Yapılacaklar (To Do)</span>
+              <span id="count-todo" class="text-xs font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">0</span>
+            </div>
+            <div id="col-todo" data-col="todo" class="kanban-col flex-1 py-3 space-y-3 overflow-y-auto"></div>
+          </div>
+
+          <div class="flex flex-col bg-slate-100/90 rounded-2xl p-3.5 border border-slate-200/80 shadow-2xs">
+            <div class="flex items-center justify-between pb-3 px-1 border-b border-slate-200">
+              <span class="text-xs font-extrabold uppercase tracking-wider text-slate-700">3. Yapılıyor (In Progress)</span>
+              <span id="count-in_progress" class="text-xs font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-700">0</span>
+            </div>
+            <div id="col-in_progress" data-col="in_progress" class="kanban-col flex-1 py-3 space-y-3 overflow-y-auto"></div>
+          </div>
+
+          <div class="flex flex-col bg-slate-100/90 rounded-2xl p-3.5 border border-slate-200/80 shadow-2xs">
+            <div class="flex items-center justify-between pb-3 px-1 border-b border-slate-200">
+              <span class="text-xs font-extrabold uppercase tracking-wider text-slate-700">4. Tamamlandı (Done)</span>
+              <span id="count-done" class="text-xs font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700">0</span>
+            </div>
+            <div id="col-done" data-col="done" class="kanban-col flex-1 py-3 space-y-3 overflow-y-auto"></div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- SAYFA 3: FLOW (AUTOMAKE DÜĞÜM AKIŞI)                                     -->
+    <!-- ========================================================================= -->
+    <section id="view-page3" class="flex-1 flex overflow-hidden hidden">
+      
+      <div class="flex-1 flex flex-col overflow-hidden">
+        <!-- Sub-header -->
+        <div class="h-14 bg-white border-b border-slate-200 px-5 flex items-center justify-between flex-shrink-0 z-10">
+          <div class="flex items-center space-x-3">
+            <div class="flex items-center space-x-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-indigo-600"></span>
+              <span class="text-xs font-extrabold text-slate-900">Flow: Otomasyon Tuvali</span>
+            </div>
+            <span class="text-slate-300">/</span>
+            <div class="relative">
+              <select id="flowSelectDropdown" class="appearance-none bg-slate-50 hover:bg-slate-100 text-slate-900 text-xs sm:text-sm font-extrabold pl-3.5 pr-9 py-2 rounded-xl border border-slate-200 focus:outline-none focus:border-indigo-500 cursor-pointer transition">
+                <option value="mvp_onboarding">1. MVP Kullanıcı Girişi & Mağaza Bağlama Akışı</option>
+                <option value="pocket_studio">2. Pocket Studio: Fotoğraftan Taslak İlana (AI)</option>
+                <option value="unified_orders">3. Çoklu Mağaza Birleşik Sipariş & Kargo Akışı</option>
+                <option value="profit_radar">4. ProfitRadar: Kesintiler & Gerçek Net Kâr</option>
+                <option value="bulk_sync">5. Çoklu Mağaza Toplu Fiyat & Etiket Eşitleme</option>
+              </select>
+              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-slate-500">
+                <i data-lucide="chevron-down" class="w-4 h-4"></i>
+              </div>
+            </div>
+            <span id="activePhaseBadge" class="px-2.5 py-0.5 text-[10px] font-extrabold rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200 hidden md:inline-block">● Published Flow</span>
+          </div>
+
+          <div class="flex items-center space-x-2.5">
+            <button id="btnRunWorkflow" class="inline-flex items-center px-3.5 py-2 text-xs font-bold rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white transition shadow-sm">
+              <i data-lucide="play" class="w-3.5 h-3.5 mr-1.5 fill-current"></i>
+              Akışı Simüle Et
+            </button>
+            <button id="btnResetCanvas" title="Görünümü Ortala" class="p-2 text-slate-500 hover:text-slate-800 bg-slate-100 rounded-xl transition border border-slate-200">
+              <i data-lucide="maximize" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Canvas & Right Node Inspector -->
+        <div class="flex-1 flex overflow-hidden relative">
+          <div id="canvasViewport" class="flex-1 studio-canvas-bg overflow-auto relative p-8">
+            <svg id="wiresSvg" class="absolute inset-0 w-[2600px] h-[1100px] pointer-events-none z-0">
+              <defs>
+                <linearGradient id="wireGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#6366F1"/>
+                  <stop offset="100%" stop-color="#8B5CF6"/>
+                </linearGradient>
+              </defs>
+            </svg>
+            <div id="nodesContainer" class="relative z-10 w-[2600px] h-[1100px]"></div>
+
+            <div class="fixed bottom-6 left-80 z-20 flex items-center space-x-2">
+              <div class="bg-white border border-slate-200 rounded-xl px-3 py-1.5 shadow-md flex items-center space-x-2 text-xs">
+                <span class="w-2 h-2 rounded-full bg-indigo-600"></span>
+                <span id="canvasSummaryText" class="font-bold text-slate-800">Pocket Studio</span>
+                <span class="text-slate-300">|</span>
+                <span class="text-[11px] text-slate-500">Kartları fareyle sürükleyebilir veya tıklayıp sağda inceleyebilirsiniz</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Node Details Drawer -->
+          <aside id="inspectorSidebar" class="w-80 sm:w-96 bg-white border-l border-slate-200 flex flex-col z-20 flex-shrink-0 shadow-xl">
+            <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+              <div class="flex items-center space-x-3">
+                <div id="inspectNodeIcon" class="w-10 h-10 rounded-xl bg-indigo-50 border border-indigo-200 flex items-center justify-center text-indigo-600 font-bold text-lg">
+                  <i data-lucide="box" class="w-5 h-5"></i>
+                </div>
+                <div>
+                  <h3 id="inspectNodeTitle" class="text-sm font-extrabold text-slate-900 leading-tight">Node Title</h3>
+                  <span id="inspectNodeSubtitle" class="text-[11px] font-medium text-slate-400">Subtitle</span>
+                </div>
+              </div>
+              <span id="inspectNodeStatusBadge" class="px-2.5 py-0.5 text-[10px] font-bold rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">Ready</span>
+            </div>
+
+            <div class="flex-1 overflow-y-auto p-5 space-y-4">
+              <div class="bg-indigo-50/50 border border-indigo-100 rounded-xl p-3.5">
+                <span class="text-[10px] font-extrabold text-indigo-600 uppercase tracking-wider block mb-1">Ne İşe Yarar? (Sade Anlatım)</span>
+                <p id="inspectNodePlain" class="text-xs text-slate-700 leading-relaxed font-medium"></p>
+              </div>
+              <div>
+                <label class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block mb-2">Giriş Parametreleri</label>
+                <div id="inspectNodeParams" class="space-y-2 text-xs"></div>
+              </div>
+              <div>
+                <label class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block mb-1">Yazılımsal Çalışma Mantığı</label>
+                <p id="inspectNodeDesc" class="text-xs text-slate-600 leading-relaxed bg-slate-50 p-3 rounded-xl border border-slate-200"></p>
+              </div>
+              <div>
+                <label class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block mb-1">Servis / API Endpoint</label>
+                <div id="inspectNodeEndpoint" class="text-[11px] font-mono bg-slate-900 text-emerald-400 p-2.5 rounded-xl break-all select-text"></div>
+              </div>
+              <div>
+                <div class="flex items-center justify-between mb-1">
+                  <label class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Örnek Veri Paketi (JSON Output)</label>
+                  <button id="btnCopyJson" class="text-[10px] text-indigo-600 hover:text-indigo-800 font-bold">Kopyala</button>
+                </div>
+                <pre id="inspectNodePayload" class="text-[11px] bg-slate-900 text-slate-200 p-3 rounded-xl border border-slate-800 overflow-x-auto max-h-40 font-mono leading-snug select-text">{}</pre>
+              </div>
+              <div class="bg-amber-50/90 border border-amber-200/80 rounded-xl p-3 text-xs">
+                <div class="font-bold text-amber-800 text-[10px] uppercase tracking-wider mb-1 flex items-center space-x-1">
+                  <i data-lucide="shield-alert" class="w-3.5 h-3.5 text-amber-600"></i>
+                  <span>Uç Durum & Hata Kalkanı</span>
+                </div>
+                <p id="inspectNodeEdgeCase" class="text-amber-900/80 text-[11px] leading-relaxed"></p>
+              </div>
+            </div>
+
+            <div class="p-4 border-t border-slate-100 bg-slate-50/50">
+              <button id="btnStepExecute" class="w-full py-2.5 px-4 text-xs font-bold rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white transition active:scale-95 shadow-sm">
+                Bu Düğümü Tek Başına Test Et
+              </button>
+            </div>
+          </aside>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <!-- ================= MODAL: ADD / EDIT KANBAN CARD ================= -->
+  <div id="cardModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden">
+      <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+        <h3 id="modalTitle" class="text-sm font-bold text-slate-900">Görev Kartı</h3>
+        <button onclick="closeCardModal()" class="text-slate-400 hover:text-slate-600 p-1">✕</button>
+      </div>
+      <form id="cardForm" class="p-5 space-y-3.5 text-xs">
+        <input type="hidden" id="cardId">
+        <div>
+          <label class="font-bold text-slate-700 block mb-1">Başlık *</label>
+          <input type="text" id="inputTitle" required class="w-full px-3 py-2 border border-slate-300 rounded-xl">
+        </div>
+        <div>
+          <label class="font-bold text-slate-700 block mb-1">Detaylı Açıklama</label>
+          <textarea id="inputDesc" rows="3" class="w-full px-3 py-2 border border-slate-300 rounded-xl"></textarea>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="font-bold text-slate-700 block mb-1">Aşama</label>
+            <select id="inputPhase" class="w-full px-3 py-2 border border-slate-300 rounded-xl bg-white">
+              <option value="proto">🎨 1. Mobil Prototip</option>
+              <option value="mvp">🚀 2. Çalışan MVP</option>
+              <option value="v2">🌟 3. Full Sürüm (V2)</option>
+            </select>
+          </div>
+          <div>
+            <label class="font-bold text-slate-700 block mb-1">Durum Sütunu</label>
+            <select id="selectColumn" class="w-full px-3 py-2 border border-slate-300 rounded-xl bg-white">
+              <option value="backlog">1. Özellik Havuzu</option>
+              <option value="todo">2. Yapılacaklar</option>
+              <option value="in_progress">3. Yapılıyor</option>
+              <option value="done">4. Tamamlandı</option>
+            </select>
+          </div>
+        </div>
+        <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
+          <button type="button" id="btnDeleteCard" class="text-rose-600 font-bold hidden">Sil</button>
+          <div class="flex space-x-2 ml-auto">
+            <button type="button" onclick="closeCardModal()" class="px-4 py-2 rounded-xl bg-slate-100 text-slate-600 font-bold">İptal</button>
+            <button type="submit" class="px-4 py-2 rounded-xl bg-blue-600 text-white font-bold">Kaydet</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 bg-slate-900 text-white text-xs px-4 py-2.5 rounded-xl shadow-xl transform transition-all duration-300 opacity-0 translate-y-2 pointer-events-none">
+    <span id="toastMsg">İşlem tamamlandı</span>
+  </div>
+
+  <!-- ================= MASTER APPLICATION JAVASCRIPT ================= -->
+  <script>
+    // =========================================================================
+    // 1. STATIC DATABASES (SCREENS, FLOWS, KANBAN CARDS)
+    // =========================================================================
+    const MASTER_SCREENS_DB = {
+      splash: {
+        stepIndex: "EKRAN 1 / 6",
+        scopeBadge: "MVP ONBOARDING",
+        title: "Splash Screen (Açılış & Değer Önerisi)",
+        flowSummary: "Kullanıcı uygulamayı ilk kez açar, 3 ana faydayı (Çoklu Mağaza, Pocket Studio, Net Kâr) görür ve 'Hemen Başla' butonuna basarak kayıt adımına geçer.",
+        userGoal: "Kullanıcının 3 saniye içinde uygulamanın resmi Etsy uygulamasından farkını ve ona ne kazandıracağını anlamasını sağlamak.",
+        endpoint: "İstemci içi açılış görünümü (Client-side splash)",
+        apiNotes: "Cihazda aktif oturum token'ı kontrol edilir. Token geçerliyse doğrudan Ana Sayfa Kokpitine yönlendirilir.",
+        flowSteps: [
+          { num: 1, title: "Uygulama Açılışı", desc: "Logo ve marka kimliği 1.2 saniye içinde yüklenir." },
+          { num: 2, title: "Değer Önerisi Kartları", desc: "3 temel vaat gösterilir: Çoklu Mağaza, Fotoğraftan Taslak İlan, Net Kâr Radarı." },
+          { num: 3, title: "Hemen Başla Tıklaması", desc: "Kullanıcı kayıt ve mağaza bağlama ekranına yönlendirilir." }
+        ],
+        components: [
+          { name: "Değer Rozetleri", desc: "Uygulamanın öne çıkan 3 özelliğini listeleyen şeffaf kart." },
+          { name: "Hemen Başla Butonu", desc: "Kullanıcıyı Giriş / Kayıt ekranına götürür." },
+          { name: "Demo Kokpit Linki", desc: "Giriş yapmadan arayüzü keşfetmek isteyenler için doğrudan ana sayfayı açar." }
+        ],
+        improvements: [
+          "İlk açılışta animasyonlu bir Lottie mockup'ı eklenebilir.",
+          "Etsy satıcılarının en çok ilgisini çeken '13 Etiket AI' özelliği vurgulanmalıdır."
+        ],
+        dos: [
+          "Resmi Etsy logosunu kural dışı kullanmamak, kendi marka kimliğini öne çıkarmak.",
+          "3 saniyeden uzun süren açılış animasyonlarından kaçınmak."
+        ],
+        donts: [
+          "Kullanıcıya henüz değer göstermeden bildirim izni istememek."
+        ],
+        cases: [
+          { title: "Zaten Giriş Yapmış Kullanıcı", solution: "Arka planda SQLite/SecureStorage token kontrol edilir ve Splash atlanarak direkt Ana Sayfaya geçilir." }
+        ],
+        trelloCards: [
+          { tag: "UI/UX", priority: "Medium", title: "Splash Screen Lottie Animasyonu", desc: "Mobil açılış ekranına akıcı ve hafif vektörel illüstrasyon entegrasyonu." }
+        ]
+      },
+      auth: {
+        stepIndex: "EKRAN 2 / 6",
+        scopeBadge: "MVP GÜVENLİK",
+        title: "Giriş Yap & Resmi Etsy OAuth Bağlantısı",
+        flowSummary: "Kullanıcı Google/Apple veya E-posta ile oturum açar, ardından resmi Etsy OAuth 2.0 PKCE penceresiyle mağazasını güvenle bağlar.",
+        userGoal: "Kullanıcıya güven vermek ve şifresini asla sormadan resmi Etsy API izni alarak mağazaları sisteme eklemek.",
+        endpoint: "GET https://www.etsy.com/oauth/connect",
+        apiNotes: "OAuth 2.0 PKCE standartları kullanılır. Scope: listings_r, listings_w, transactions_r, shops_r.",
+        flowSteps: [
+          { num: 1, title: "Giriş Seçimi", desc: "Google, Apple veya E-posta seçilir." },
+          { num: 2, title: "Oturum Başlatma", desc: "Kullanıcı için JWT oturumu oluşturulur." },
+          { num: 3, title: "Etsy İzin Penceresi", desc: "WebBrowser üzerinden resmi Etsy izin ekranı açılır." },
+          { num: 4, title: "Token Kasası Kaydı", desc: "Access ve refresh token'lar AES-256 ile veritabanına kaydedilir." }
+        ],
+        components: [
+          { name: "Sosyal Giriş Butonları", desc: "Tek tıkla Google / Apple ile giriş sağlar." },
+          { name: "OAuth Güvenlik Rozeti", desc: "Etsy şifresinin asla sorulmadığını belirten güven metni." },
+          { name: "Giriş Yap Butonu", desc: "Oturum açıp kullanıcıyı ana kokpite aktarır." }
+        ],
+        improvements: [
+          "Magic Link (şifresiz e-posta ile giriş) eklenerek kayıt sürtünmesi düşürülebilir."
+        ],
+        dos: [
+          "Etsy şifresini kesinlikle form üzerinde istememek, sadece resmi OAuth kullanmak.",
+          "Kullanıcı izin verdikten sonra gelen mağaza adını anında ekranda teyit etmek."
+        ],
+        donts: [
+          "Giriş yapmadan mağaza verilerine erişmeye çalışmamak."
+        ],
+        cases: [
+          { title: "Kullanıcı İzni Reddederse", solution: "Kullanıcıya mağaza bağlamadan sipariş ve ilan özelliklerinin çalışamayacağı kibarca anlatılır ve tekrar dene butonu sunulur." }
+        ],
+        trelloCards: [
+          { tag: "Backend", priority: "High", title: "OAuth 2.0 PKCE Akışı ve Callback Servisi", desc: "Etsy yetkilendirme kodunu token takasıyla alan güvenli backend endpoint'i." },
+          { tag: "Güvenlik", priority: "High", title: "AES-256 Token Vault", desc: "Mağaza token'larının şifreli olarak veritabanında saklanması." }
+        ]
+      },
+      home: {
+        stepIndex: "EKRAN 3 / 6",
+        scopeBadge: "MVP ÇEKİRDEK",
+        title: "Ana Sayfa (Birleşik Kokpit)",
+        flowSummary: "Tüm bağlı mağazaların bugünkü cirosu, tahmini kârı ve acil kargolanması gereken siparişler tek ekranda toplanır.",
+        userGoal: "Farklı mağazalar arasında geçiş yapma zahmetini bitirmek ve tek ekranda günün önceliklerini görmek.",
+        endpoint: "GET /v3/application/shops/{shop_id}/receipts",
+        apiNotes: "Bekleyen siparişler kargolanma son tarihine göre asc (artan) sıralamayla listelenir.",
+        flowSteps: [
+          { num: 1, title: "Mağaza Seçimi / Tümü", desc: "Kullanıcı tek bir dükkana veya tümüne göre filtreler." },
+          { num: 2, title: "Ciro & Net Kâr Özeti", desc: "Günün toplam geliri ve tahmini cep kârı hesaplanır." },
+          { num: 3, title: "Acil Kargo Listesi", desc: "Kargolanma süresi yaklaşan siparişler kırmızı etiketle öne çıkar." },
+          { num: 4, title: "Alıcıya Mesaj / Kargolandı", desc: "Mesaj butonu resmi Etsy uygulamasına Deep-Link ile zıplatır." }
+        ],
+        components: [
+          { name: "Mağaza Filtre Hapları", desc: "Tüm Mağazalar, AnatolianLeather, TerraCeramics filtreleri." },
+          { name: "Ciro & Net Kâr Kartı", desc: "Toplam brüt gelir ve komisyonlar sonrası tahmini net kâr." },
+          { name: "Acil Sipariş Kartları", desc: "Kalan saat, alıcı ülkesi ve kargo durum butonları." },
+          { name: "Hızlı İlan Butonu", desc: "Doğrudan AI Stüdyo ekranını açar." }
+        ],
+        improvements: [
+          "Aşağı çekip yenileme (Pull-to-refresh) jesti eklenmeli.",
+          "Günün kargo hedefini gösteren ilerleme çubuğu eklenebilir."
+        ],
+        dos: [
+          "Siparişleri kargolama gününe göre aciliyet sırasıyla dizmek.",
+          "Mesajlaşma için resmi Etsy Seller uygulamasına Deep-Link vermek."
+        ],
+        donts: [
+          "Etsy API'de mesajlaşma olmadığı için uygulama içine korsan mesajlaşma gömmemek."
+        ],
+        cases: [
+          { title: "İnternet Bağlantısı Kopması", solution: "SQLite önbelleğindeki son siparişler gösterilir ve üstte 'Çevrimdışı mod' uyarısı çıkar." }
+        ],
+        trelloCards: [
+          { tag: "Mobil", priority: "High", title: "Birleşik Sipariş Listesi & Kargo Aciliyet Sıralaması", desc: "Tüm mağazaların bekleyen siparişlerini tek listeye toplayan UI bileşeni." },
+          { tag: "Mobil", priority: "Medium", title: "Etsy App Deep-Link Yönlendirici", desc: "Sipariş detayından resmi Etsy Seller uygulamasına doğrudan mesaj yönlendirmesi." }
+        ]
+      },
+      shops: {
+        stepIndex: "EKRAN 4 / 6",
+        scopeBadge: "MVP ÇEKİRDEK",
+        title: "Mağazalarım (Çoklu Hesap Masası)",
+        flowSummary: "Kullanıcının bağlı tüm Etsy dükkanları listelenir; aktif ilan, taslak ve ciro metrikleri takip edilir.",
+        userGoal: "Mağazaların sağlık durumunu görmek ve yeni bir dükkanı tek tıkla sisteme dahil etmek.",
+        endpoint: "GET /v3/application/shops/{shop_id}",
+        apiNotes: "Her dükkan için listing count ve rating bilgileri düzenli aralıklarla senkronize edilir.",
+        flowSteps: [
+          { num: 1, title: "Dükkan Kartlarının Yüklenmesi", desc: "Aktif ve taslak ilan sayıları ekrana gelir." },
+          { num: 2, title: "Mağaza Detayına Giriş", desc: "Kart üzerine tıklandığında o dükkanın ürünleri listelenir." },
+          { num: 3, title: "Yeni Mağaza Ekleme", desc: "Kullanıcı 3. mağazasını bağlamak için OAuth akışını başlatır." }
+        ],
+        components: [
+          { name: "Mağaza Kartı", desc: "Dükkan adı, puanı, aktif ve taslak ilan sayıları." },
+          { name: "Bağlantı Durum Işığı", desc: "Token'ın geçerli ve senkronize olduğunu gösteren yeşil rozet." },
+          { name: "+ Yeni Mağaza Ekle Butonu", desc: "Ek OAuth oturumu başlatır." }
+        ],
+        improvements: [
+          "Taslak kutusuna tıklandığında alttan çekmece açılıp taslak ilanlar listelenebilir."
+        ],
+        dos: [
+          "Her mağazanın token durumunu bağımsız yönetmek.",
+          "Birden fazla mağazayı açıkça etiketlemek."
+        ],
+        donts: [
+          "Bir mağazanın token'ı düştüğünde diğer mağazaları devre dışı bırakmamak."
+        ],
+        cases: [
+          { title: "Token Süresi Dolduğunda", solution: "İlgili dükkan kartında sarı 'Tekrar Bağlan' butonu belirir, diğer mağazalar çalışmaya devam eder." }
+        ],
+        trelloCards: [
+          { tag: "Backend", priority: "High", title: "Çoklu Shop ID & Token Eşleme Mimarisi", desc: "Kullanıcıya bağlı çoklu mağazaları bağımsız yöneten veri modeli." }
+        ]
+      },
+      studio: {
+        stepIndex: "EKRAN 5 / 6",
+        scopeBadge: "MVP YILDIZ ÖZELLİK",
+        title: "AI İlan Stüdyosu (Pocket Studio)",
+        flowSummary: "Kullanıcı ürünün fotoğrafını çeker, arka plan temizlenir, Vision AI 140 karakter başlık ve 13 etiket üretir, tek tıkla Taslak ilan olarak Etsy'ye basılır.",
+        userGoal: "İlan açma süresini 40 dakikadan 60 saniyeye indirmek.",
+        endpoint: "POST /v3/application/shops/{shop_id}/listings",
+        apiNotes: "createDraftListing ve uploadListingImage endpoint'leri peş peşe çağrılır.",
+        flowSteps: [
+          { num: 1, title: "Fotoğraf Çekimi", desc: "Telefon kamerasıyla ürün görseli yakalanır." },
+          { num: 2, title: "Dekupe & AI Analizi", desc: "Arka plan stüdyoya çevrilir, ürün SEO açısından analiz edilir." },
+          { num: 3, title: "140 Karakter Başlık & 13 Etiket", desc: "Etsy algoritmasına uygun başlık ve etiketler kutulara doldurulur." },
+          { num: 4, title: "Taslak Olarak Gönderme", desc: "Fiyat onaylandıktan sonra ürün doğrudan Etsy'de Draft olarak açılır." }
+        ],
+        components: [
+          { name: "Fotoğraf Önizleme", desc: "Dekupe edilmiş yüksek kaliteli ürün görseli." },
+          { name: "Etsy Başlık Alanı", desc: "140 karakter sayaçlı SEO başlık kutusu." },
+          { name: "13 Etiket Hapları", desc: "Etsy arama motoruna uygun 20 karakteri geçmeyen 13 etiket." },
+          { name: "Fiyat & Stok Kutusu", desc: "Kullanıcının belirlediği satış fiyatı." },
+          { name: "Taslak Olarak Gönder Butonu", desc: "Etsy API'ye taslak basım isteğini tetikler." }
+        ],
+        improvements: [
+          "Etiketlerin üzerine dokunulduğunda silinip yenisinin üretilebilmesi eklenebilir."
+        ],
+        dos: [
+          "Ürünü her zaman doğrudan yayına değil, mutlaka 'Draft' (Taslak) olarak kaydetmek.",
+          "Tam 13 etiketi eksiksiz doldurmak."
+        ],
+        donts: [
+          "Telif hakkı taşıyan (Disney, Barbie, Velcro vb.) markaları etiketlere sokmamak."
+        ],
+        cases: [
+          { title: "Telif Riski Taşıyan Kelime Tespiti", solution: "Trademark Guard devreye girer, kelimeyi kırmızıya boyar ve güvenli alternatif önerir." }
+        ],
+        trelloCards: [
+          { tag: "AI", priority: "High", title: "Vision SEO & 13 Etiket Üretim Modülü", desc: "Görselden Etsy 140 karakter başlık ve 13 etiket çıkaran AI promptu." },
+          { tag: "Etsy API", priority: "High", title: "createDraftListing & uploadListingImage Entegrasyonu", desc: "Taslak ilanı görseliyle birlikte Etsy'ye kaydeden servis." }
+        ]
+      },
+      profile: {
+        stepIndex: "EKRAN 6 / 6",
+        scopeBadge: "MVP ABONELİK",
+        title: "Profil, Kredi & Bildirim Ayarları",
+        flowSummary: "Kullanıcı kalan aylık AI ilan kredilerini görür, Pro paketini yönetir ve sipariş seslerini ayarlar.",
+        userGoal: "Kullanım kotasını takip etmek ve bildirim tercihlerini özelleştirmek.",
+        endpoint: "GET /api/v1/user/billing-status",
+        apiNotes: "Kalan AI kredi bakiyesi ve RevenueCat / App Store abonelik durumu çekilir.",
+        flowSteps: [
+          { num: 1, title: "Profil Özeti", desc: "Kullanıcı bilgisi ve Pro Plan rozeti gösterilir." },
+          { num: 2, title: "Kredi Çubuğu", desc: "Aylık kalan AI ilan kredisi (38/50) kontrol edilir." },
+          { num: 3, title: "Bildirim Seçimi", desc: "Cha-ching sipariş sesi ve kargo sabah alarmları açılıp kapatılır." }
+        ],
+        components: [
+          { name: "Kredi İlerleme Çubuğu", desc: "Kalan AI ilan hakkı görselleştirmesi." },
+          { name: "Bildirim Anahtarları", desc: "Sesli bildirimleri özelleştirme düğmeleri." },
+          { name: "Oturumu Kapat Butonu", desc: "Oturumu güvenle sonlandırır." }
+        ],
+        improvements: [
+          "Kredi bittiğinde tek tıkla '50 Ek Kredi Al ($4.99)' butonu konulabilir."
+        ],
+        dos: [
+          "Kalan krediyi her zaman şeffaf ve anlaşılır göstermek."
+        ],
+        donts: [
+          "Kullanıcıya sormadan arka planda pahalı AI istekleri çalıştırmamak."
+        ],
+        cases: [
+          { title: "Kredi Tükendiğinde", solution: "AI Stüdyo ekranında uyarı çıkar ve kullanıcıya kredi yenileme seçeneği sunulur." }
+        ],
+        trelloCards: [
+          { tag: "Ödeme", priority: "Medium", title: "RevenueCat / In-App Purchase Abonelik Entegrasyonu", desc: "Pro paket ve kredi satın alma akışlarının mobil entegrasyonu." }
+        ]
+      }
+    };
+
+    const AUTOMAKE_FLOWS_DB = {
+      pocket_studio: {
+        title: "Pocket Studio: Fotoğraftan Taslak İlana (AI)",
+        phaseBadge: "● MVP Core Pipeline",
+        nodes: [
+          {
+            id: "node-cam",
+            title: "1. Mobil Kamera Çekimi",
+            subtitle: "Kamera & Galeri Tetikleyicisi",
+            category: "TRIGGER",
+            badgeColor: "bg-orange-100 text-orange-800 border-orange-200",
+            icon: "camera",
+            status: "Ready",
+            execTime: "120ms",
+            x: 40,
+            y: 80,
+            plain: "Satıcı telefon kamerasıyla atölyede ürünün fotoğrafını çeker veya galerisinden seçer.",
+            desc: "Fotoğraf 2000x2000px kare çözünürlüğe ölçeklenir ve WebP formatında sıkıştırılır.",
+            endpoint: "expo-camera / react-native-image-picker",
+            params: { "Çözünürlük": "2000x2000px", "Format": "image/webp", "Maks Boyut": "2.5 MB" },
+            payload: { "image_uri": "file:///tmp/raw_mug_01.webp", "file_size_bytes": 1845000 },
+            edgeCase: "Görsel 10MB üzerindeyse cihazda otomatik sıkıştırılarak bellek taşması engellenir."
+          },
+          {
+            id: "node-bg",
+            title: "2. BiRefNet Arka Plan Temizleme",
+            subtitle: "Yapay Zeka Dekupe Servisi",
+            category: "AI VISION",
+            badgeColor: "bg-indigo-100 text-indigo-800 border-indigo-200",
+            icon: "scissors",
+            status: "Ready",
+            execTime: "850ms",
+            x: 390,
+            y: 80,
+            plain: "Karmaşık atölye arka planı silinir ve ürün tertemiz beyaz/stüdyo arka plana oturtulur.",
+            desc: "Replicate üzerinde barındırılan BiRefNet modeliyle yarım cent maliyetle dekupe yapılır.",
+            endpoint: "POST https://api.replicate.com/v1/predictions (BiRefNet)",
+            params: { "Model": "birefnet-v1.4", "Threshold": "0.85", "Maliyet": "$0.005" },
+            payload: { "cleaned_image_url": "https://r2.etsystudio.com/clean_mug_01.png", "transparent": true },
+            edgeCase: "Dekupe servisi zaman aşımına uğrarsa ham görsel hafif arka plan bulanıklaştırılarak iletilir."
+          },
+          {
+            id: "node-ai",
+            title: "3. Vision AI ile SEO & 13 Etiket",
+            subtitle: "Etsy SEO Optimizasyon Motoru",
+            category: "LLM REASONING",
+            badgeColor: "bg-purple-100 text-purple-800 border-purple-200",
+            icon: "sparkles",
+            status: "Ready",
+            execTime: "1.1s",
+            x: 740,
+            y: 80,
+            plain: "Yapay zeka ürünü tanır; Etsy'nin aradığı 140 karakterlik başlığı ve tam 13 adet popüler etiketi türetir.",
+            desc: "Gemini 1.5 Flash API'sine görsel ve Etsy kuralları iletilerek yapılandırılmış JSON çıktısı alınır.",
+            endpoint: "POST https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash",
+            params: { "Model": "gemini-1.5-flash", "Max Tokens": "600", "Tag Sayısı": "Tam 13 Adet" },
+            payload: {
+              "title": "Handmade Ceramic Coffee Mug, Rustic Pottery Tea Cup, Minimalist Boho Kitchen Decor",
+              "tags": ["ceramic mug", "pottery cup", "tea mug", "boho decor", "coffee lover gift"],
+              "price_suggestion": 28.00
+            },
+            edgeCase: "Etiketlerden biri 20 karakteri geçerse prompt kuralı gereği otomatik kısaltılır."
+          },
+          {
+            id: "node-guard",
+            title: "4. Trademark & Telif Kalkanı",
+            subtitle: "Mağaza Koruma Filtresi",
+            category: "SECURITY",
+            badgeColor: "bg-amber-100 text-amber-800 border-amber-200",
+            icon: "shield-alert",
+            status: "Ready",
+            execTime: "40ms",
+            x: 1090,
+            y: 80,
+            plain: "Başlık ve etiketlerde Barbie, Disney, Velcro gibi mağaza kapatabilecek tescilli kelimeler taranır.",
+            desc: "USPTO tescilli terimler regex veritabanıyla taranır. Riskli kelime varsa alternatif önerilir.",
+            endpoint: "In-memory Trademark Trie Filter",
+            params: { "Kelime Havuzu": "14.000 Terim", "Eşleşme Modu": "Exact & Levenshtein" },
+            payload: { "has_infringement": false, "flagged_words": [], "safety_score": 100 },
+            edgeCase: "Telif riski yakalanırsa işlem durur ve mobil ekranda kullanıcıya alternatif önerilir."
+          },
+          {
+            id: "node-etsy",
+            title: "5. Etsy Taslak İlan Basımı",
+            subtitle: "Resmi Etsy API v3 Entegratörü",
+            category: "INTEGRATION",
+            badgeColor: "bg-emerald-100 text-emerald-800 border-emerald-200",
+            icon: "shopping-bag",
+            status: "Ready",
+            execTime: "680ms",
+            x: 1440,
+            y: 80,
+            plain: "Ürün görselleri ve SEO bilgileri seçilen dükkana Taslak (Draft) olarak kaydedilir.",
+            desc: "createDraftListing ve uploadListingImage çağrıları yapılarak ilan satıcının onayına hazır hale gelir.",
+            endpoint: "POST /v3/application/shops/{shop_id}/listings",
+            params: { "Durum": "draft", "Who_Made": "i_did", "When_Made": "made_to_order" },
+            payload: { "listing_id": 1894239821, "state": "draft", "url": "https://etsy.com/your/shops/me/listing-editor/edit/1894239821" },
+            edgeCase: "Etsy token süresi dolmuşsa arka planda refresh token ile sessizce yenilenip tekrar denenir."
+          }
+        ],
+        connections: [
+          { from: "node-cam", to: "node-bg", label: "WebP Görsel" },
+          { from: "node-bg", to: "node-ai", label: "Dekupe PNG" },
+          { from: "node-ai", to: "node-guard", label: "SEO JSON" },
+          { from: "node-guard", to: "node-etsy", label: "Güvenli Metadata" }
+        ]
+      },
+      mvp_onboarding: {
+        title: "1. MVP Kullanıcı Girişi & Mağaza Bağlama Akışı",
+        phaseBadge: "● MVP Core Pipeline",
+        nodes: [
+          {
+            id: "node-auth-start",
+            title: "1. Mobil Kayıt / Giriş",
+            subtitle: "Kimlik Doğrulama",
+            category: "TRIGGER",
+            badgeColor: "bg-blue-100 text-blue-800 border-blue-200",
+            icon: "user",
+            status: "Ready",
+            execTime: "80ms",
+            x: 40,
+            y: 80,
+            plain: "Kullanıcı Google, Apple veya e-posta ile kayıt olur.",
+            desc: "Supabase / Firebase Auth üzerinden güvenli JWT oturumu başlatılır.",
+            endpoint: "POST /api/v1/auth/signup",
+            params: { "Provider": "Google / Apple / Email", "JWT_TTL": "7 Gün" },
+            payload: { "user_id": "usr_9921", "email": "satici@atolye.com" },
+            edgeCase: "Cihaz offline ise hata mesajı gösterilir."
+          },
+          {
+            id: "node-pkce",
+            title: "2. Etsy OAuth PKCE Başlatma",
+            subtitle: "Şifresiz İzin Penceresi",
+            category: "SECURITY",
+            badgeColor: "bg-indigo-100 text-indigo-800 border-indigo-200",
+            icon: "lock",
+            status: "Ready",
+            execTime: "15ms",
+            x: 390,
+            y: 80,
+            plain: "Resmi Etsy izin penceresi açılır; Etsy şifresi kullanıcıdan asla istenmez.",
+            desc: "SHA-256 Code Challenge ve state parametreleri oluşturulur.",
+            endpoint: "GET https://www.etsy.com/oauth/connect",
+            params: { "Scopes": "listings_r, listings_w, transactions_r, shops_r", "PKCE": "S256" },
+            payload: { "code_challenge": "E9Mel-2Vz...", "state": "st_8192" },
+            edgeCase: "Kullanıcı izni iptal ederse güvenli geri dönüş sağlanır."
+          },
+          {
+            id: "node-vault",
+            title: "3. Token Kasası (AES-256)",
+            subtitle: "Güvenli Mağaza Saklama",
+            category: "DATABASE",
+            badgeColor: "bg-emerald-100 text-emerald-800 border-emerald-200",
+            icon: "database",
+            status: "Ready",
+            execTime: "45ms",
+            x: 740,
+            y: 80,
+            plain: "Etsy'den dönen yetki kodu token ile takas edilir ve şifrelenir.",
+            desc: "PostgreSQL pgcrypto ile AES-256 şifreli olarak kullanıcı mağazaları tablosuna yazılır.",
+            endpoint: "POST /v3/public/oauth/token",
+            params: { "Grant_Type": "authorization_code", "Encryption": "AES-256-GCM" },
+            payload: { "shop_id": 482910, "shop_name": "TerraCeramics", "token_saved": true },
+            edgeCase: "Aynı mağaza daha önce eklenmişse çift kayıt engellenip token güncellenir."
+          }
+        ],
+        connections: [
+          { from: "node-auth-start", to: "node-pkce", label: "JWT Oturumu" },
+          { from: "node-pkce", to: "node-vault", label: "Auth Code" }
+        ]
+      },
+      unified_orders: {
+        title: "3. Çoklu Mağaza Birleşik Sipariş & Kargo Akışı",
+        phaseBadge: "● MVP Core Pipeline",
+        nodes: [
+          {
+            id: "node-poll",
+            title: "1. Çoklu Mağaza Sipariş Çekimi",
+            subtitle: "Periyodik Senkronizasyon",
+            category: "TRIGGER",
+            badgeColor: "bg-orange-100 text-orange-800 border-orange-200",
+            icon: "refresh-cw",
+            status: "Ready",
+            execTime: "310ms",
+            x: 40,
+            y: 80,
+            plain: "Bağlı tüm mağazaların bekleyen siparişleri çekilir.",
+            desc: "Tüm bağlı dükkanlar için getShopReceipts endpoint'i paralel olarak sorgulanır.",
+            endpoint: "GET /v3/application/shops/{shop_id}/receipts?was_shipped=false",
+            params: { "Sorgu Aralığı": "5 Dakika", "Filtre": "was_shipped=false" },
+            payload: { "total_unshipped": 8, "shops_synced": 2 },
+            edgeCase: "Bir mağaza yanıt vermezse diğer mağazalar engellenmeden işlem tamamlanır."
+          },
+          {
+            id: "node-sort",
+            title: "2. Kargo Aciliyet Sıralaması",
+            subtitle: "Zaman Tüneli Motoru",
+            category: "LOGIC",
+            badgeColor: "bg-blue-100 text-blue-800 border-blue-200",
+            icon: "clock",
+            status: "Ready",
+            execTime: "25ms",
+            x: 390,
+            y: 80,
+            plain: "Siparişler son kargolanma saatine göre en acilden uzağa doğru sıralanır.",
+            desc: "expected_ship_date alanı baz alınarak acil siparişlere kırmızı rozet atanır.",
+            endpoint: "In-memory Date Comparator",
+            params: { "Kritik Eşik": "6 Saat Altı (Kırmızı)", "Sıralama": "ASC" },
+            payload: { "critical_orders_count": 2, "earliest_deadline": "Bugün 18:00" },
+            edgeCase: "Kargo tarihi girilmemişse sipariş oluşturulma tarihine 3 iş günü eklenir."
+          },
+          {
+            id: "node-push",
+            title: "3. Birleşik Kokpit Beslemesi",
+            subtitle: "Mobil Bildirim & Arayüz",
+            category: "INTEGRATION",
+            badgeColor: "bg-emerald-100 text-emerald-800 border-emerald-200",
+            icon: "smartphone",
+            status: "Ready",
+            execTime: "60ms",
+            x: 740,
+            y: 80,
+            plain: "Kullanıcının cep telefonuna tek ekranda acil sipariş listesi yansıtılır.",
+            desc: "React Native UI state güncellenir ve acil kargolar için bildirim tetiklenir.",
+            endpoint: "WebSocket / In-App State Update",
+            params: { "Platform": "iOS & Android", "Ses": "Cha-Ching" },
+            payload: { "ui_updated": true, "banner_shown": "2 Sipariş Bugün Kargolanmalı!" },
+            edgeCase: "Uygulama arka plandaysa FCM/APNs push bildirimi gönderilir."
+          }
+        ],
+        connections: [
+          { from: "node-poll", to: "node-sort", label: "Ham Siparişler" },
+          { from: "node-sort", to: "node-push", label: "Aciliyet Listesi" }
+        ]
+      },
+      profit_radar: {
+        title: "4. ProfitRadar: Net Kâr & Kesinti Denetimi",
+        phaseBadge: "● Faz 2 Özelliği",
+        nodes: [
+          {
+            id: "node-ledger",
+            title: "1. Finansal Ledger Çekimi",
+            subtitle: "Mikro Kesinti Madenciliği",
+            category: "FINANCE",
+            badgeColor: "bg-emerald-100 text-emerald-800 border-emerald-200",
+            icon: "dollar-sign",
+            status: "Ready",
+            execTime: "420ms",
+            x: 40,
+            y: 80,
+            plain: "Etsy'nin kestiği komisyon, kargo etiketi ve reklam ücretleri çekilir.",
+            desc: "getShopPaymentAccountLedgerEntries ile sipariş bazlı tüm mikro kesintiler ayrıştırılır.",
+            endpoint: "GET /v3/application/shops/{shop_id}/payment-account/ledger-entries",
+            params: { "Kapsam": "Son 30 Gün", "Girdiler": "listing_fee, transaction_fee, ads" },
+            payload: { "gross_sale": 48.00, "transaction_fee": 3.12, "offsite_ads": 7.20 },
+            edgeCase: "Döviz kuru farkları Etsy para birimi dönüştürücüsü ile normalize edilir."
+          },
+          {
+            id: "node-cogs",
+            title: "2. COGS (Ürün Maliyeti) Çıkarımı",
+            subtitle: "Net Kâr Hesaplayıcı",
+            category: "LOGIC",
+            badgeColor: "bg-indigo-100 text-indigo-800 border-indigo-200",
+            icon: "calculator",
+            status: "Ready",
+            execTime: "15ms",
+            x: 390,
+            y: 80,
+            plain: "Satıcının girdiği hammadde ve kutu maliyeti siparişten düşülür.",
+            desc: "Net Kâr = Brüt Satış - Etsy Kesintileri - Kargo Etiketi - Satıcı Maliyeti.",
+            endpoint: "Local Financial Calculator Engine",
+            params: { "Maliyet Formülü": "Brüt - Fees - COGS", "Para Birimi": "USD" },
+            payload: { "cogs_cost": 8.50, "real_net_profit": 29.10, "margin_percent": 60.6 },
+            edgeCase: "Kullanıcı maliyet girmemişse sistem sadece pazar yeri kesintilerini hesaplar."
+          },
+          {
+            id: "node-alert",
+            title: "3. Zarar Eden Ürün Alarmı",
+            subtitle: "Offsite Ads Dedektörü",
+            category: "SECURITY",
+            badgeColor: "bg-rose-100 text-rose-800 border-rose-200",
+            icon: "alert-triangle",
+            status: "Ready",
+            execTime: "50ms",
+            x: 740,
+            y: 80,
+            plain: "Offsite Ads kesintisi sonrası zarar ettiren ürün tespit edilirse uyarı verilir.",
+            desc: "Kâr marjı %10'un altına inen veya eksiye düşen ürünler için satıcıya bildirim atılır.",
+            endpoint: "Push Alarm Generator",
+            params: { "Kritik Eşik": "Net Kâr <= $0.00", "Hedef": "Fiyat Artışı Önerisi" },
+            payload: { "is_loss": false, "suggestion": "Fiyatı en az $32.00 olarak güncelleyin." },
+            edgeCase: "Negatif kâr tespit edildiğinde satıcıya tek tıkla fiyat güncelleme butonu sunulur."
+          }
+        ],
+        connections: [
+          { from: "node-ledger", to: "node-cogs", label: "Kesinti Dökümü" },
+          { from: "node-cogs", to: "node-alert", label: "Net Kâr Marjı" }
+        ]
+      },
+      bulk_sync: {
+        title: "5. Toplu Fiyat & Etiket Eşitleme",
+        phaseBadge: "● Faz 2 Özelliği",
+        nodes: [
+          {
+            id: "node-bulk-trigger",
+            title: "1. Toplu Düzenleme Emri",
+            subtitle: "Çoklu İlan Seçimi",
+            category: "TRIGGER",
+            badgeColor: "bg-purple-100 text-purple-800 border-purple-200",
+            icon: "zap",
+            status: "Ready",
+            execTime: "60ms",
+            x: 40,
+            y: 80,
+            plain: "Kullanıcı 50 ürünün etiketini veya fiyatını aynı anda değiştirmeyi seçer.",
+            desc: "Toplu işlem talebi oluşturulup BullMQ kuyruğuna iletilir.",
+            endpoint: "POST /api/v1/listings/bulk-update",
+            params: { "Seçili İlan": 50, "İşlem": "Fiyat +%10 & Yeni Etiket Ekle" },
+            payload: { "batch_id": "bch_7721", "total_items": 50 },
+            edgeCase: "Seçilen ürünlerden biri taslak durumundaysa kuralına göre güncellenir."
+          },
+          {
+            id: "node-rate-limit",
+            title: "2. Leaky-Bucket Rate Limiter",
+            subtitle: "10 req/s Koruma Bariyeri",
+            category: "LOGIC",
+            badgeColor: "bg-amber-100 text-amber-800 border-amber-200",
+            icon: "clock",
+            status: "Ready",
+            execTime: "100ms",
+            x: 390,
+            y: 80,
+            plain: "Etsy'nin saniyede 10 istek limitine takılmamak için istekler mikrosaniyelere bölünür.",
+            desc: "Redis Token Bucket algoritması ile saniyede maksimum 8 istek Etsy'ye gönderilir.",
+            endpoint: "Redis Token-Bucket Rate Limiter",
+            params: { "Max Rate": "8 req/sec", "Retry Backoff": "Exponential" },
+            payload: { "rate_limit_ok": true, "queue_latency_ms": 12 },
+            edgeCase: "Etsy 429 dönerse kuyruk 2 saniye bekleyip otomatik olarak yeniden dener."
+          },
+          {
+            id: "node-bulk-exec",
+            title: "3. updateListingInventory Çağrısı",
+            subtitle: "Etsy API Senkronizasyonu",
+            category: "INTEGRATION",
+            badgeColor: "bg-emerald-100 text-emerald-800 border-emerald-200",
+            icon: "check-circle",
+            status: "Ready",
+            execTime: "1.2s",
+            x: 740,
+            y: 80,
+            plain: "Tüm varyasyon fiyatları ve etiketler mağazalarda güncellenir.",
+            desc: "updateListing ve updateListingInventory endpoint'leri sırayla tamamlanır.",
+            endpoint: "PUT /v3/application/listings/{listing_id}/inventory",
+            params: { "Method": "PUT", "Batch Completion": "100%" },
+            payload: { "updated_count": 50, "failed_count": 0 },
+            edgeCase: "Herhangi bir üründe hata çıkarsa diğer 49 ürünün işlemi aksatılmaz."
+          }
+        ],
+        connections: [
+          { from: "node-bulk-trigger", to: "node-rate-limit", label: "Kuyruk İsteği" },
+          { from: "node-rate-limit", to: "node-bulk-exec", label: "Sıralı İstekler" }
+        ]
+      }
+    };
+
+    const DEFAULT_KANBAN_CARDS = [
+      { id: "k-01", title: "Splash Screen Lottie Animasyonu", desc: "Mobil açılış ekranına akıcı vektörel illüstrasyon entegrasyonu.", phase: "proto", column: "done" },
+      { id: "k-02", title: "Resmi Etsy OAuth 2.0 PKCE Akışı", desc: "Etsy yetkilendirme kodunu token takasıyla alan güvenli backend endpoint'i.", phase: "mvp", column: "in_progress" },
+      { id: "k-03", title: "AES-256 Token Vault Veritabanı", desc: "Mağaza token'larının şifreli olarak veritabanında saklanması.", phase: "mvp", column: "in_progress" },
+      { id: "k-04", title: "Birleşik Sipariş Listesi & Kargo Sıralaması", desc: "Tüm mağazaların bekleyen siparişlerini tek listeye toplayan UI bileşeni.", phase: "proto", column: "done" },
+      { id: "k-05", title: "Etsy App Deep-Link Yönlendirici", desc: "Sipariş detayından resmi Etsy Seller uygulamasına doğrudan mesaj yönlendirmesi.", phase: "mvp", column: "todo" },
+      { id: "k-06", title: "Çoklu Shop ID & Token Eşleme Mimarisi", desc: "Kullanıcıya bağlı çoklu mağazaları bağımsız yöneten veri modeli.", phase: "mvp", column: "todo" },
+      { id: "k-07", title: "BiRefNet Arka Plan Temizleme Pipeline", desc: "Görselleri stüdyo ortamına çeviren yarım centlik dekupe servisi.", phase: "mvp", column: "todo" },
+      { id: "k-08", title: "Vision AI ile 13 Etiket & SEO Başlığı", desc: "Görselden Etsy 140 karakter başlık ve 13 etiket çıkaran AI promptu.", phase: "proto", column: "done" },
+      { id: "k-09", title: "createDraftListing & Image Upload Entegrasyonu", desc: "Taslak ilanı görseliyle birlikte Etsy'ye kaydeden servis.", phase: "mvp", column: "todo" },
+      { id: "k-10", title: "Trademark Guard Regex Filtresi", desc: "14.000 tescilli marka kelimesini kontrol eden güvenlik kalkanı.", phase: "v2", column: "backlog" },
+      { id: "k-11", title: "RevenueCat In-App Purchase Abonelik", desc: "Pro paket ve kredi satın alma akışlarının mobil entegrasyonu.", phase: "mvp", column: "backlog" },
+      { id: "k-12", title: "ProfitRadar: Ledger API Kesinti Madenciliği", desc: "Mikro kesintileri kuruşu kuruşuna çeken finansal motor.", phase: "v2", column: "backlog" },
+      { id: "k-13", title: "Offsite Ads Negatif Kâr Uyarı Servisi", desc: "Dış reklam kesintisi sonrası zarar eden ürünleri tespit eden alarm.", phase: "v2", column: "backlog" },
+      { id: "k-14", title: "BullMQ Rate Limiting Kuyruğu (10 req/s)", desc: "Etsy API hız limitini aşmayan sıralı işlem kuyruğu.", phase: "v2", column: "backlog" },
+      { id: "k-15", title: "Toplu Varyasyon Fiyatı Güncelleme", desc: "50+ ilanın fiyatını tek tıkla artıran toplu işlem servisi.", phase: "v2", column: "backlog" },
+      { id: "k-16", title: "Mağazalar Arası Akıllı İlan Klonlayıcı", desc: "A mağazasındaki ürünü AI ile yeniden yazarak B mağazasına taslak basma.", phase: "v2", column: "backlog" },
+      { id: "k-17", title: "Etsy order.paid Webhook Dinleyicisi", desc: "Yeni sipariş geldiğinde anında telefona push atan webhook servisi.", phase: "v2", column: "backlog" },
+      { id: "k-18", title: "Kargo Sabah Alarmı & Cha-Ching Sesi", desc: "Satıcıya sipariş geldiğinde tescilli sesle anlık bildirim verme.", phase: "mvp", column: "todo" }
+    ];
+
+    // =========================================================================
+    // 2. RUNTIME STATE & INITIALIZATION
+    // =========================================================================
+    let currentPage = 'page1'; // 'page1' (Ekranlar), 'page2' (Kartlar), 'page3' (Flow)
+    let currentScreenKey = 'home';
+    let currentSpecTab = 'flow';
+
+    let currentFlowKey = 'pocket_studio';
+    let currentFlow = AUTOMAKE_FLOWS_DB[currentFlowKey];
+    let selectedNodeId = currentFlow.nodes[0].id;
+    let draggingNode = null;
+    let dragOffsetX = 0;
+    let dragOffsetY = 0;
+
+    let kanbanCards = [];
+    let currentKanbanPhase = 'ALL';
+    let kanbanSearch = '';
+    let draggedCardId = null;
+
+    function refreshLucideIcons() {
+      if (window.lucide && typeof window.lucide.createIcons === 'function') {
+        window.lucide.createIcons();
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. Initialize Page 1
+      selectScreen('home');
+
+      // 2. Initialize Page 3 (Automake Canvas)
+      loadAutomakeFlow('pocket_studio');
+      document.getElementById('flowSelectDropdown').addEventListener('change', (e) => {
+        loadAutomakeFlow(e.target.value);
+      });
+      document.getElementById('btnRunWorkflow').addEventListener('click', runWorkflowSimulation);
+      document.getElementById('btnResetCanvas').addEventListener('click', () => {
+        const viewport = document.getElementById('canvasViewport');
+        viewport.scrollTo({ left: 0, top: 0, behavior: 'smooth' });
+        showToast('Tuval başlangıç konumuna hizalandı');
+      });
+      document.getElementById('btnCopyJson').addEventListener('click', () => {
+        const text = document.getElementById('inspectNodePayload').textContent;
+        if (navigator.clipboard) navigator.clipboard.writeText(text);
+        showToast('JSON kopyalandı');
+      });
+      document.getElementById('btnStepExecute').addEventListener('click', () => {
+        const node = currentFlow.nodes.find(n => n.id === selectedNodeId);
+        if (node) showToast('⚡ "' + node.title + '" başarıyla test edildi!');
+      });
+
+      // Canvas Dragging
+      const viewport = document.getElementById('canvasViewport');
+      viewport.addEventListener('mousemove', (e) => {
+        if (!draggingNode) return;
+        const rect = document.getElementById('nodesContainer').getBoundingClientRect();
+        draggingNode.x = Math.max(20, Math.round(e.clientX - rect.left - dragOffsetX));
+        draggingNode.y = Math.max(20, Math.round(e.clientY - rect.top - dragOffsetY));
+        renderAutomakeCanvas();
+      });
+      window.addEventListener('mouseup', () => { draggingNode = null; });
+
+      // 3. Initialize Page 2 (Trello Board)
+      initKanban();
+
+      // 4. Sidebar Toggle Listeners
+      const sidebar = document.getElementById('mainSidebar');
+      const btnToggleSidebar = document.getElementById('btnToggleSidebar');
+      const btnExpandSidebar = document.getElementById('btnExpandSidebar');
+
+      if (btnToggleSidebar && btnExpandSidebar) {
+        btnToggleSidebar.addEventListener('click', () => {
+          sidebar.classList.add('-ml-64');
+          btnExpandSidebar.classList.remove('hidden');
+        });
+
+        btnExpandSidebar.addEventListener('click', () => {
+          sidebar.classList.remove('-ml-64');
+          btnExpandSidebar.classList.add('hidden');
+        });
+      }
+
+      // 5. Download Standalone HTML Button
+      document.getElementById('btnDownloadHtml').addEventListener('click', () => {
+        const htmlContent = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+        const blob = new Blob([htmlContent], { type: "text/html;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = "Etsy_Seller_Pro_Master_Studio.html";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+        showToast('💻 Dosya indirildi! Tarayıcınızda açıp inceleyebilirsiniz.');
+      });
+
+      refreshLucideIcons();
+    });
+
+    // ================= 3 DISTINCT PAGES NAVIGATION SWITCHER =================
+    function goToPage(pageKey) {
+      currentPage = pageKey;
+      const pages = {
+        page1: document.getElementById('view-page1'),
+        page2: document.getElementById('view-page2'),
+        page3: document.getElementById('view-page3')
+      };
+
+      Object.keys(pages).forEach(k => {
+        if (k === pageKey) pages[k].classList.remove('hidden');
+        else pages[k].classList.add('hidden');
+      });
+
+      ['page1', 'page2', 'page3'].forEach(k => {
+        const btn = document.getElementById(`sidebarBtn-${k}`);
+        if (btn) {
+          if (k === pageKey) {
+            btn.className = 'sidebar-page-item active w-full text-left p-3 rounded-2xl flex items-center space-x-3 group border border-transparent';
+          } else {
+            btn.className = 'sidebar-page-item w-full text-left p-3 rounded-2xl flex items-center space-x-3 group border border-transparent text-slate-600 hover:bg-slate-100 hover:text-slate-900';
+          }
+        }
+      });
+
+      if (pageKey === 'page2') renderKanban();
+      if (pageKey === 'page3') renderAutomakeCanvas();
+      refreshLucideIcons();
+    }
+
+    // ================= SELECT SCREEN (PAGE 1: 3-COLUMN WORKSPACE) =================
+    function selectScreen(screenKey) {
+      currentScreenKey = screenKey;
+      const data = MASTER_SCREENS_DB[screenKey];
+      if (!data) return;
+
+      ['splash', 'auth', 'home', 'shops', 'studio', 'profile'].forEach(k => {
+        const card = document.getElementById(`stepBtn-${k}`);
+        if (card) {
+          if (k === screenKey) card.classList.add('active');
+          else card.classList.remove('active');
+        }
+      });
+
+      document.getElementById('specStepBadge').textContent = data.stepIndex;
+      document.getElementById('specScopeBadge').textContent = data.scopeBadge;
+      document.getElementById('specScreenTitle').textContent = data.title;
+      document.getElementById('specFlowSummary').textContent = data.flowSummary;
+      document.getElementById('specUserGoal').textContent = data.userGoal;
+      document.getElementById('specEndpoint').textContent = data.endpoint;
+      document.getElementById('specApiNotes').textContent = data.apiNotes;
+      document.getElementById('specTrelloCountBadge').textContent = `${data.trelloCards.length} Görev Kartı`;
+
+      const flowContainer = document.getElementById('specFlowStepsContainer');
+      flowContainer.innerHTML = data.flowSteps.map((fs, idx) => `
+        <div class="relative flex items-start space-x-3 bg-white p-3.5 rounded-2xl border border-slate-200/90 shadow-2xs">
+          ${idx < data.flowSteps.length - 1 ? '<div class="flow-connector-line"></div>' : ''}
+          <div class="w-7 h-7 rounded-xl bg-orange-600 text-white font-black text-xs flex items-center justify-center flex-shrink-0 z-10 shadow-2xs">
+            ${fs.num}
+          </div>
+          <div class="flex-1 overflow-hidden">
+            <h4 class="text-xs font-black text-slate-900">${fs.title}</h4>
+            <p class="text-[11px] text-slate-600 leading-relaxed mt-0.5">${fs.desc}</p>
+          </div>
+        </div>
+      `).join('');
+
+      const tableBody = document.getElementById('specComponentsTable');
+      tableBody.innerHTML = data.components.map(c => `
+        <tr class="hover:bg-slate-50 transition">
+          <td class="p-2.5 font-bold text-slate-900 align-top">${c.name}</td>
+          <td class="p-2.5 text-slate-600 align-top text-[11px] leading-relaxed">${c.desc}</td>
+        </tr>
+      `).join('');
+
+      document.getElementById('specImprovementsList').innerHTML = data.improvements.map(item => `<li>${item}</li>`).join('');
+      document.getElementById('specDosList').innerHTML = data.dos.map(item => `<li>${item}</li>`).join('');
+      document.getElementById('specDontsList').innerHTML = data.donts.map(item => `<li>${item}</li>`).join('');
+      document.getElementById('specCasesContainer').innerHTML = data.cases.map(cs => `
+        <div class="p-2.5 rounded-xl bg-white border border-amber-200/90 shadow-2xs space-y-1">
+          <div class="font-bold text-amber-950">${cs.title}</div>
+          <div class="text-[11px] text-amber-900/80 leading-relaxed font-medium">↳ Çözüm: ${cs.solution}</div>
+        </div>
+      `).join('');
+
+      const trelloContainer = document.getElementById('specTrelloCardsContainer');
+      trelloContainer.innerHTML = data.trelloCards.map(tc => `
+        <div class="p-3.5 bg-white rounded-2xl border border-slate-200/90 shadow-2xs space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-indigo-50 text-indigo-700 border border-indigo-200">${tc.tag}</span>
+            <span class="text-[10px] font-black ${tc.priority === 'High' ? 'text-rose-600' : (tc.priority === 'Medium' ? 'text-amber-600' : 'text-slate-500')}">${tc.priority} Öncelik</span>
+          </div>
+          <h4 class="text-xs font-black text-slate-900 leading-snug">${tc.title}</h4>
+          <p class="text-[11px] text-slate-600 leading-relaxed">${tc.desc}</p>
+        </div>
+      `).join('');
+
+      renderPhoneMockup(screenKey);
+      refreshLucideIcons();
+    }
+
+    // ================= SWITCH SPEC TAB =================
+    function setSpecTab(tabKey) {
+      currentSpecTab = tabKey;
+      ['flow', 'guide', 'decisions', 'trello'].forEach(t => {
+        const content = document.getElementById(`tabContent-${t}`);
+        const btn = document.getElementById(`tabBtn-${t}`);
+        if (t === tabKey) {
+          content.classList.remove('hidden');
+          btn.classList.add('active');
+        } else {
+          content.classList.add('hidden');
+          btn.classList.remove('active');
+        }
+      });
+      refreshLucideIcons();
+    }
+
+    // ================= RENDER PHONE CONTENT =================
+    function renderPhoneMockup(screenKey) {
+      const container = document.getElementById('phoneContent');
+      const bottomBar = document.getElementById('phoneBottomBar');
+
+      const isCoreScreen = ['home', 'shops', 'studio', 'profile'].includes(screenKey);
+      if (isCoreScreen) {
+        bottomBar.classList.remove('hidden');
+        ['home', 'shops', 'studio', 'profile'].forEach(k => {
+          const btn = document.getElementById(`nav-btn-${k}`);
+          if (btn) {
+            btn.className = k === screenKey 
+              ? 'flex flex-col items-center justify-center py-1 text-orange-600'
+              : 'flex flex-col items-center justify-center py-1 text-slate-400 hover:text-slate-700';
+          }
+        });
+      } else {
+        bottomBar.classList.add('hidden');
+      }
+
+      if (screenKey === 'splash') {
+        container.innerHTML = `
+          <div class="flex-1 bg-gradient-to-b from-orange-600 to-amber-600 text-white p-6 flex flex-col justify-between">
+            <div class="pt-4 flex items-center justify-between">
+              <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-white/20">ETSY COMPANION</span>
+              <span class="text-xs font-semibold text-white/80">v1.0 MVP</span>
+            </div>
+            <div class="my-auto text-center space-y-4">
+              <div class="w-20 h-20 rounded-3xl bg-white text-orange-600 font-black text-4xl flex items-center justify-center mx-auto shadow-xl">E</div>
+              <h2 class="text-2xl font-black tracking-tight leading-snug">Tüm Etsy Mağazaların Tek Cebinde.</h2>
+              <p class="text-xs text-orange-100 leading-relaxed px-1">Birden fazla mağazanızı tek ekrandan yönetin, fotoğraftan 60 saniyede SEO uyumlu taslak ilan açın.</p>
+              <div class="bg-white/10 backdrop-blur-xs rounded-2xl p-3 text-left space-y-1.5 border border-white/15 text-xs">
+                <div class="flex items-center space-x-2"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-300"></i><span>Çoklu Mağaza Birleşik Sipariş Takibi</span></div>
+                <div class="flex items-center space-x-2"><i data-lucide="camera" class="w-3.5 h-3.5 text-amber-300"></i><span>Fotoğraftan Otomatik 13 Etiket & Başlık</span></div>
+                <div class="flex items-center space-x-2"><i data-lucide="dollar-sign" class="w-3.5 h-3.5 text-emerald-300"></i><span>Gerçek Net Kâr & Kesinti Hesabı</span></div>
+              </div>
+            </div>
+            <div class="space-y-2 pb-2">
+              <button onclick="selectScreen('auth')" class="w-full py-3.5 bg-white text-orange-600 font-black text-xs rounded-2xl shadow-lg flex items-center justify-center space-x-1">
+                <span>Hemen Başla (Ücretsiz)</span>
+                <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+              </button>
+              <button onclick="selectScreen('home')" class="w-full py-2 text-white/90 font-semibold text-[11px] hover:underline">Demo Olarak Doğrudan Kokpite Geç</button>
+            </div>
+          </div>
+        `;
+      } else if (screenKey === 'auth') {
+        container.innerHTML = `
+          <div class="flex-1 bg-white p-6 flex flex-col justify-between">
+            <div>
+              <button onclick="selectScreen('splash')" class="text-xs text-slate-400 hover:text-slate-700 font-bold mb-4 flex items-center space-x-1">
+                <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+                <span>Geri Dön</span>
+              </button>
+              <h2 class="text-xl font-black text-slate-900">Giriş Yap / Kayıt Ol</h2>
+              <p class="text-xs text-slate-500 mt-0.5">Mağazalarınızı eşitlemek için giriş yapın.</p>
+              <div class="mt-5 space-y-2.5">
+                <button onclick="selectScreen('home'); showToast('Google ile giriş başarılı!');" class="w-full py-2.5 px-4 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50 flex items-center justify-center space-x-2">
+                  <i data-lucide="globe" class="w-4 h-4 text-blue-500"></i><span>Google ile Devam Et</span>
+                </button>
+                <button onclick="selectScreen('home'); showToast('Apple ile giriş başarılı!');" class="w-full py-2.5 px-4 bg-slate-900 text-white rounded-xl text-xs font-bold hover:bg-slate-800 flex items-center justify-center space-x-2">
+                  <i data-lucide="command" class="w-4 h-4 text-slate-100"></i><span>Apple ile Devam Et</span>
+                </button>
+              </div>
+              <div class="my-4 flex items-center"><div class="flex-1 h-px bg-slate-200"></div><span class="px-2 text-[10px] text-slate-400 font-bold uppercase">veya e-posta</span><div class="flex-1 h-px bg-slate-200"></div></div>
+              <div class="space-y-3">
+                <input type="email" value="satici@atolye.com" class="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl">
+                <input type="password" value="••••••••" class="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl">
+              </div>
+            </div>
+            <div class="space-y-3 pt-4 border-t border-slate-100">
+              <div class="p-2.5 rounded-xl bg-orange-50 border border-orange-200 text-[11px] text-orange-950 font-medium flex items-start space-x-2">
+                <i data-lucide="shield-check" class="w-4 h-4 text-orange-600 flex-shrink-0 mt-0.5"></i>
+                <span><strong>Resmi Etsy OAuth Güvencesi:</strong> Şifrenizi asla sormayız; bağlantı resmi Etsy izin penceresiyle kurulur.</span>
+              </div>
+              <button onclick="selectScreen('home'); showToast('Hoş geldiniz!');" class="w-full py-3 bg-orange-600 text-white font-black text-xs rounded-xl shadow-md flex items-center justify-center space-x-1.5">
+                <span>Giriş Yap ve Kokpite Geç</span>
+                <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+          </div>
+        `;
+      } else if (screenKey === 'home') {
+        container.innerHTML = `
+          <div class="p-4 space-y-4">
+            <div class="flex items-center justify-between">
+              <div>
+                <span class="text-[10px] font-black text-slate-400 uppercase">BİRLEŞİK KOKPİT</span>
+                <h2 class="text-base font-black text-slate-900 leading-tight">Merhaba, Burak 👋</h2>
+              </div>
+              <button onclick="selectScreen('studio')" class="px-3 py-1.5 bg-orange-600 text-white text-[11px] font-extrabold rounded-xl flex items-center space-x-1">
+                <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                <span>Hızlı İlan</span>
+              </button>
+            </div>
+            <div class="flex items-center space-x-1.5 overflow-x-auto pb-0.5">
+              <span class="px-2.5 py-1 rounded-lg text-[11px] font-extrabold bg-slate-900 text-white whitespace-nowrap">Tüm Mağazalar (2)</span>
+              <span class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-white text-slate-600 border border-slate-200 whitespace-nowrap flex items-center space-x-1">
+                <i data-lucide="briefcase" class="w-3 h-3 text-amber-700"></i>
+                <span>AnatolianLeather</span>
+              </span>
+              <span class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-white text-slate-600 border border-slate-200 whitespace-nowrap flex items-center space-x-1">
+                <i data-lucide="coffee" class="w-3 h-3 text-sky-700"></i>
+                <span>TerraCeramics</span>
+              </span>
+            </div>
+            <div class="bg-slate-900 text-white p-4 rounded-2xl shadow-md">
+              <div class="flex items-center justify-between text-[11px] text-slate-400 mb-1">
+                <span>BUGÜNKÜ TOPLAM CİRO</span><span class="text-emerald-400 font-bold">8 Yeni Sipariş</span>
+              </div>
+              <div class="flex items-baseline justify-between">
+                <span class="text-2xl font-black">$342.00</span>
+                <div class="text-right"><span class="text-[10px] text-slate-400 block">Tahmini Net Kâr</span><span class="text-xs font-black text-emerald-400">$198.40 (%58)</span></div>
+              </div>
+            </div>
+            <div class="space-y-2.5">
+              <div class="flex items-center justify-between">
+                <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-wider">Kargo Bekleyen Siparişler</h3>
+                <span class="text-[10px] font-black text-rose-600 bg-rose-50 px-2 py-0.5 rounded-full flex items-center space-x-1">
+                  <i data-lucide="clock" class="w-3 h-3"></i>
+                  <span>2 Bugün Son Gün!</span>
+                </span>
+              </div>
+              <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-2xs space-y-2">
+                <div class="flex items-center justify-between">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-black bg-amber-50 text-amber-800 border border-amber-200 flex items-center space-x-1">
+                    <i data-lucide="briefcase" class="w-3 h-3"></i>
+                    <span>AnatolianLeather</span>
+                  </span>
+                  <span class="text-[10px] font-black text-rose-600">Son 5 Saat!</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <div>
+                    <div class="text-xs font-bold text-slate-900">Kişiselleştirilmiş Deri Cüzdan</div>
+                    <div class="text-[10px] text-slate-500 flex items-center space-x-1 mt-0.5">
+                      <span>Sarah M. (ABD)</span>
+                      <span>•</span>
+                      <i data-lucide="gift" class="w-3 h-3 text-orange-500"></i>
+                      <span>Hediye Paketi</span>
+                    </div>
+                  </div>
+                  <div class="text-right"><div class="text-xs font-black text-slate-900">$48.00</div><div class="text-[10px] text-emerald-600 font-bold">Net: $29.10</div></div>
+                </div>
+                <div class="pt-2 border-t border-slate-100 flex items-center justify-between">
+                  <button onclick="showToast('Resmi Etsy Seller sohbetine yönlendiriliyor...')" class="text-[10px] font-bold text-indigo-600 hover:underline flex items-center space-x-1">
+                    <i data-lucide="message-square" class="w-3 h-3"></i>
+                    <span>Mesaj At (Deep-Link)</span>
+                  </button>
+                  <button onclick="showToast('Sipariş kargolandı olarak işaretlendi!')" class="px-2.5 py-1 bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 rounded-lg text-[10px] font-bold text-slate-700 flex items-center space-x-1">
+                    <i data-lucide="check" class="w-3 h-3"></i>
+                    <span>Kargolandı</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      } else if (screenKey === 'shops') {
+        container.innerHTML = `
+          <div class="p-4 space-y-4">
+            <div class="flex items-center justify-between">
+              <div>
+                <span class="text-[10px] font-black text-slate-400 uppercase">ÇOKLU MAĞAZA</span>
+                <h2 class="text-base font-black text-slate-900">Bağlı Mağazalarım (2)</h2>
+              </div>
+              <button onclick="showToast('Etsy OAuth penceresi açıldı');" class="px-2.5 py-1.5 bg-orange-600 text-white text-[11px] font-black rounded-xl flex items-center space-x-1">
+                <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                <span>Mağaza Ekle</span>
+              </button>
+            </div>
+            <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2.5">
+                  <div class="w-9 h-9 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center font-bold">
+                    <i data-lucide="briefcase" class="w-4 h-4"></i>
+                  </div>
+                  <div><h3 class="text-xs font-black text-slate-900">AnatolianLeather</h3><span class="text-[10px] text-emerald-600 font-bold">● Bağlantı Aktif</span></div>
+                </div>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700 flex items-center space-x-1">
+                  <i data-lucide="star" class="w-3 h-3 text-amber-500 fill-amber-500"></i>
+                  <span>4.9 (412)</span>
+                </span>
+              </div>
+              <div class="grid grid-cols-3 gap-2 pt-2 border-t border-slate-100 text-center">
+                <div class="bg-slate-50 p-2 rounded-xl"><div class="text-[10px] text-slate-400">Aktif İlan</div><div class="text-xs font-black">84</div></div>
+                <div class="bg-slate-50 p-2 rounded-xl"><div class="text-[10px] text-slate-400">Taslak</div><div class="text-xs font-black text-orange-600">5</div></div>
+                <div class="bg-slate-50 p-2 rounded-xl"><div class="text-[10px] text-slate-400">Ciro</div><div class="text-xs font-black text-emerald-600">$4,280</div></div>
+              </div>
+            </div>
+            <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2.5">
+                  <div class="w-9 h-9 rounded-xl bg-sky-100 text-sky-800 flex items-center justify-center font-bold">
+                    <i data-lucide="coffee" class="w-4 h-4"></i>
+                  </div>
+                  <div><h3 class="text-xs font-black text-slate-900">TerraCeramics</h3><span class="text-[10px] text-emerald-600 font-bold">● Bağlantı Aktif</span></div>
+                </div>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700 flex items-center space-x-1">
+                  <i data-lucide="star" class="w-3 h-3 text-amber-500 fill-amber-500"></i>
+                  <span>5.0 (128)</span>
+                </span>
+              </div>
+              <div class="grid grid-cols-3 gap-2 pt-2 border-t border-slate-100 text-center">
+                <div class="bg-slate-50 p-2 rounded-xl"><div class="text-[10px] text-slate-400">Aktif İlan</div><div class="text-xs font-black">42</div></div>
+                <div class="bg-slate-50 p-2 rounded-xl"><div class="text-[10px] text-slate-400">Taslak</div><div class="text-xs font-black text-orange-600">2</div></div>
+                <div class="bg-slate-50 p-2 rounded-xl"><div class="text-[10px] text-slate-400">Ciro</div><div class="text-xs font-black text-emerald-600">$2,150</div></div>
+              </div>
+            </div>
+            <button onclick="showToast('Yeni Etsy mağazası yetkilendirme penceresi açıldı');" class="w-full py-3.5 border-2 border-dashed border-slate-300 rounded-2xl text-xs font-bold text-slate-500 hover:text-orange-600 transition flex items-center justify-center space-x-1.5">
+              <i data-lucide="store" class="w-4 h-4"></i>
+              <span>+ 3. Etsy Mağazanı Bağla</span>
+            </button>
+          </div>
+        `;
+      } else if (screenKey === 'studio') {
+        container.innerHTML = `
+          <div class="p-4 space-y-3">
+            <div class="flex items-center justify-between">
+              <div><span class="text-[10px] font-black text-orange-600 uppercase">POCKET STUDIO</span><h2 class="text-base font-black text-slate-900">Fotoğraftan Taslak İlan</h2></div>
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 flex items-center space-x-1">
+                <i data-lucide="sparkles" class="w-3 h-3"></i>
+                <span>AI SEO Hazır</span>
+              </span>
+            </div>
+            <div>
+              <label class="text-[10px] font-bold text-slate-500 uppercase block mb-1">Yüklenecek Mağaza</label>
+              <select class="w-full text-xs font-bold p-2 bg-white border border-slate-200 rounded-xl">
+                <option>TerraCeramics (Taslak Olarak Kaydet)</option>
+                <option>AnatolianLeather (Taslak Olarak Kaydet)</option>
+              </select>
+            </div>
+            <div class="flex items-center space-x-3 bg-white p-2.5 rounded-xl border border-slate-200">
+              <div class="w-12 h-12 rounded-lg bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-700">
+                <i data-lucide="coffee" class="w-6 h-6"></i>
+              </div>
+              <div>
+                <div class="text-xs font-bold text-slate-900">Dekupe Edilmiş Ürün</div>
+                <div class="text-[10px] text-emerald-600 font-semibold flex items-center space-x-1">
+                  <span>2000x2000px Kare</span>
+                  <span>•</span>
+                  <i data-lucide="shield" class="w-3 h-3"></i>
+                  <span>Telif Riski Yok</span>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="flex justify-between text-[10px] font-bold text-slate-500 mb-1"><span>ETSY BAŞLIĞI</span><span class="text-emerald-600">112 / 140 Karakter</span></div>
+              <textarea rows="2" class="w-full text-[11px] font-medium p-2 bg-white border border-slate-200 rounded-xl text-slate-800">Handmade Ceramic Coffee Mug, Rustic Pottery Tea Cup, Minimalist Boho Kitchen Decor, Unique Gift for Coffee Lover</textarea>
+            </div>
+            <div>
+              <div class="flex justify-between text-[10px] font-bold text-slate-500 mb-1"><span>13 ETİKET (TAGS)</span><span class="text-orange-600">13 / 13 Dolu</span></div>
+              <div class="flex flex-wrap gap-1 bg-white p-2 rounded-xl border border-slate-200">
+                <span class="px-2 py-0.5 bg-slate-100 rounded text-[10px] font-medium">ceramic mug</span>
+                <span class="px-2 py-0.5 bg-slate-100 rounded text-[10px] font-medium">pottery cup</span>
+                <span class="px-2 py-0.5 bg-slate-100 rounded text-[10px] font-medium">tea mug</span>
+                <span class="px-2 py-0.5 bg-slate-100 rounded text-[10px] font-medium">boho decor</span>
+                <span class="px-2 py-0.5 bg-slate-100 rounded text-[10px] font-medium">+9 etiket daha</span>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <input type="text" value="Fiyat: $28.00" class="w-full text-xs font-bold p-2 bg-white border border-slate-200 rounded-xl">
+              <input type="text" value="Stok: 5 Adet" class="w-full text-xs font-bold p-2 bg-white border border-slate-200 rounded-xl">
+            </div>
+            <button onclick="selectScreen('shops'); showToast('İlan TerraCeramics mağazasına Taslak olarak kaydedildi!');" class="w-full py-3 bg-emerald-600 text-white font-black text-xs rounded-xl shadow-md flex items-center justify-center space-x-1.5">
+              <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+              <span>Etsy Mağazama Taslak Olarak Gönder</span>
+            </button>
+          </div>
+        `;
+      } else if (screenKey === 'profile') {
+        container.innerHTML = `
+          <div class="p-4 space-y-4">
+            <div><span class="text-[10px] font-black text-slate-400 uppercase">HESAP</span><h2 class="text-base font-black text-slate-900">Profil & Abonelik</h2></div>
+            <div class="bg-white p-4 rounded-2xl border border-slate-200 flex items-center justify-between">
+              <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-full bg-orange-600 text-white font-black flex items-center justify-center text-sm">BK</div>
+                <div><div class="text-xs font-black text-slate-900">Burak K.</div><div class="text-[10px] text-slate-500">satici@atolye.com</div></div>
+              </div>
+              <span class="px-2.5 py-1 rounded-full text-[10px] font-black bg-orange-100 text-orange-700">PRO PLAN</span>
+            </div>
+            <div class="bg-white p-4 rounded-2xl border border-slate-200 space-y-2">
+              <div class="flex justify-between text-xs font-bold"><span>Aylık AI İlan Kredisi</span><span class="text-orange-600 font-black">38 / 50 Kaldı</span></div>
+              <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden"><div class="bg-orange-500 h-full" style="width: 76%"></div></div>
+              <p class="text-[10px] text-slate-500">Her fotoğraf çekimi ve 13 etiket üretimi 1 kredi harcar.</p>
+            </div>
+            <div class="bg-white p-4 rounded-2xl border border-slate-200 space-y-2.5 text-xs">
+              <div class="font-bold text-slate-800">Bildirim Ayarları</div>
+              <div class="flex justify-between items-center"><span class="text-slate-600">Sipariş Sesi (Cha-Ching!)</span><span class="text-[10px] font-bold text-emerald-600">Açık</span></div>
+              <div class="flex justify-between items-center"><span class="text-slate-600">Kargo Sabah Alarmı (09:00)</span><span class="text-[10px] font-bold text-emerald-600">Açık</span></div>
+            </div>
+            <button onclick="selectScreen('splash'); showToast('Oturum kapatıldı');" class="w-full py-2.5 border border-rose-200 text-rose-600 font-bold text-xs rounded-xl hover:bg-rose-50 flex items-center justify-center space-x-1.5">
+              <i data-lucide="log-out" class="w-4 h-4"></i>
+              <span>Oturumu Kapat</span>
+            </button>
+          </div>
+        `;
+      }
+      refreshLucideIcons();
+    }
+
+    // ================= AUTOMAKE WORKFLOW CANVAS (PAGE 3) =================
+    function loadAutomakeFlow(flowKey) {
+      currentFlowKey = flowKey;
+      currentFlow = AUTOMAKE_FLOWS_DB[flowKey];
+      if (!currentFlow) return;
+
+      document.getElementById('flowSelectDropdown').value = flowKey;
+      document.getElementById('activePhaseBadge').textContent = currentFlow.phaseBadge;
+      document.getElementById('canvasSummaryText').textContent = `${currentFlow.title} (${currentFlow.nodes.length} Düğüm)`;
+
+      selectedNodeId = currentFlow.nodes[0].id;
+      renderAutomakeCanvas();
+      inspectAutomakeNode(currentFlow.nodes[0]);
+    }
+
+    function renderAutomakeCanvas() {
+      const container = document.getElementById('nodesContainer');
+      const svg = document.getElementById('wiresSvg');
+      container.innerHTML = '';
+      
+      svg.innerHTML = `
+        <defs>
+          <linearGradient id="wireGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#6366F1"/>
+            <stop offset="100%" stop-color="#8B5CF6"/>
+          </linearGradient>
+        </defs>
+      `;
+
+      currentFlow.connections.forEach(conn => {
+        const fromNode = currentFlow.nodes.find(n => n.id === conn.from);
+        const toNode = currentFlow.nodes.find(n => n.id === conn.to);
+        if (!fromNode || !toNode) return;
+
+        const startX = fromNode.x + 290;
+        const startY = fromNode.y + 88;
+        const endX = toNode.x;
+        const endY = toNode.y + 88;
+
+        const deltaX = Math.abs(endX - startX) * 0.5;
+        const pathData = `M ${startX} ${startY} C ${startX + deltaX} ${startY}, ${endX - deltaX} ${endY}, ${endX} ${endY}`;
+
+        const track = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        track.setAttribute('d', pathData);
+        track.setAttribute('stroke', '#CBD5E1');
+        track.setAttribute('stroke-width', '2.5');
+        track.setAttribute('fill', 'none');
+        svg.appendChild(track);
+
+        const wire = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        wire.setAttribute('d', pathData);
+        wire.setAttribute('stroke', 'url(#wireGrad)');
+        wire.setAttribute('stroke-width', '2.5');
+        wire.setAttribute('fill', 'none');
+        wire.setAttribute('class', 'animated-wire');
+        svg.appendChild(wire);
+
+        const midX = 0.125 * startX + 0.375 * (startX + deltaX) + 0.375 * (endX - deltaX) + 0.125 * endX;
+        const midY = 0.125 * startY + 0.375 * startY + 0.375 * endY + 0.125 * endY;
+
+        const midGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        midGroup.innerHTML = `
+          <rect x="${midX - 34}" y="${midY - 10}" width="68" height="20" rx="10" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2"/>
+          <text x="${midX}" y="${midY + 3.5}" text-anchor="middle" fill="#475569" font-size="9" font-weight="700" font-family="Plus Jakarta Sans">${conn.label || '+'}</text>
+        `;
+        svg.appendChild(midGroup);
+      });
+
+      currentFlow.nodes.forEach(node => {
+        const isSelected = node.id === selectedNodeId;
+        const nodeEl = document.createElement('div');
+        nodeEl.id = node.id;
+        nodeEl.style.left = `${node.x}px`;
+        nodeEl.style.top = `${node.y}px`;
+        nodeEl.style.width = '290px';
+        nodeEl.className = `automake-node absolute bg-white border rounded-2xl cursor-pointer select-none ${
+          isSelected ? 'active border-indigo-600' : 'border-slate-200/95'
+        }`;
+
+        nodeEl.addEventListener('click', () => {
+          selectedNodeId = node.id;
+          renderAutomakeCanvas();
+          inspectAutomakeNode(node);
+        });
+
+        nodeEl.addEventListener('mousedown', (e) => {
+          if (e.target.tagName === 'BUTTON') return;
+          draggingNode = node;
+          const rect = nodeEl.getBoundingClientRect();
+          dragOffsetX = e.clientX - rect.left;
+          dragOffsetY = e.clientY - rect.top;
+        });
+
+        const paramRowsHtml = Object.entries(node.params || {}).slice(0, 2).map(([k, v]) => `
+          <div class="flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-slate-50 border border-slate-200/70 text-[11px]">
+            <span class="text-slate-400 font-medium truncate mr-2">${k}</span>
+            <span class="font-mono font-bold text-slate-700 truncate">${v}</span>
+          </div>
+        `).join('');
+
+        const statusDot = node.status === 'Running' 
+          ? 'bg-amber-500 animate-ping' 
+          : (node.status === 'Success' ? 'bg-emerald-500' : 'bg-indigo-500');
+
+        nodeEl.innerHTML = `
+          <div class="absolute -left-2 top-[82px] w-3.5 h-3.5 rounded-full bg-white border-[3px] border-indigo-500 shadow-2xs"></div>
+          <div class="absolute -right-2 top-[82px] w-3.5 h-3.5 rounded-full bg-white border-[3px] border-indigo-600 shadow-2xs"></div>
+
+          <div class="px-3.5 py-2.5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50 rounded-t-2xl">
+            <div class="flex items-center space-x-2">
+              <div class="w-7 h-7 rounded-lg bg-white border border-slate-200/90 flex items-center justify-center text-sm shadow-2xs">
+                <i data-lucide="${node.icon}" class="w-4 h-4 text-slate-700"></i>
+              </div>
+              <div>
+                <h4 class="text-xs font-extrabold text-slate-900 leading-none">${node.title}</h4>
+                <span class="text-[10px] text-slate-400 font-medium">${node.subtitle}</span>
+              </div>
+            </div>
+            <span class="px-2 py-0.5 rounded-md text-[9px] font-extrabold border ${node.badgeColor || 'bg-slate-100 text-slate-600 border-slate-200'}">${node.category}</span>
+          </div>
+
+          <div class="p-3.5 space-y-2.5">
+            <p class="text-[11px] text-slate-600 leading-relaxed line-clamp-2 font-medium">${node.plain}</p>
+            <div class="space-y-1.5">${paramRowsHtml}</div>
+          </div>
+
+          <div class="px-3.5 py-2 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400 bg-slate-50/30 rounded-b-2xl">
+            <div class="flex items-center space-x-1.5">
+              <span class="w-2 h-2 rounded-full ${statusDot}"></span>
+              <span class="font-bold text-slate-600">${node.status}</span>
+            </div>
+            <span class="font-mono text-slate-400">${node.execTime || '150ms'}</span>
+          </div>
+        `;
+
+        container.appendChild(nodeEl);
+      });
+      refreshLucideIcons();
+    }
+
+    function inspectAutomakeNode(node) {
+      const iconEl = document.getElementById('inspectNodeIcon');
+      iconEl.innerHTML = `<i data-lucide="${node.icon}" class="w-5 h-5"></i>`;
+
+      document.getElementById('inspectNodeTitle').textContent = node.title;
+      document.getElementById('inspectNodeSubtitle').textContent = `${node.category} • ${node.subtitle}`;
+      document.getElementById('inspectNodeStatusBadge').textContent = node.status;
+      document.getElementById('inspectNodePlain').textContent = node.plain;
+      document.getElementById('inspectNodeDesc').textContent = node.desc;
+      document.getElementById('inspectNodeEndpoint').textContent = node.endpoint;
+      document.getElementById('inspectNodePayload').textContent = JSON.stringify(node.payload, null, 2);
+      document.getElementById('inspectNodeEdgeCase').textContent = node.edgeCase;
+
+      const paramsContainer = document.getElementById('inspectNodeParams');
+      paramsContainer.innerHTML = '';
+      if (node.params) {
+        Object.entries(node.params).forEach(([k, v]) => {
+          const row = document.createElement('div');
+          row.className = 'p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-between text-xs';
+          row.innerHTML = `<span class="text-slate-500 font-medium">${k}</span><span class="font-mono font-bold text-slate-800">${v}</span>`;
+          paramsContainer.appendChild(row);
+        });
+      }
+      refreshLucideIcons();
+    }
+
+    function runWorkflowSimulation() {
+      showToast('🚀 Automake akış simülasyonu başlatıldı!');
+      const nodes = currentFlow.nodes;
+      let idx = 0;
+
+      function next() {
+        if (idx >= nodes.length) {
+          showToast('✅ Akış başarıyla tamamlandı!');
+          return;
+        }
+        const n = nodes[idx];
+        selectedNodeId = n.id;
+        n.status = 'Running';
+        renderAutomakeCanvas();
+        inspectAutomakeNode(n);
+
+        setTimeout(() => {
+          n.status = 'Success';
+          renderAutomakeCanvas();
+          inspectAutomakeNode(n);
+          idx++;
+          setTimeout(next, 450);
+        }, 600);
+      }
+      next();
+    }
+
+    // ================= TRELLO KANBAN FUNCTIONS (PAGE 2) =================
+    function initKanban() {
+      try {
+        const saved = localStorage.getItem('etsy_studio_kanban_master_v5');
+        kanbanCards = saved ? JSON.parse(saved) : [...DEFAULT_KANBAN_CARDS];
+      } catch (e) {
+        kanbanCards = [...DEFAULT_KANBAN_CARDS];
+      }
+      renderKanban();
+
+      document.getElementById('kanbanSearchInput').addEventListener('input', (e) => {
+        kanbanSearch = e.target.value.trim().toLowerCase();
+        renderKanban();
+      });
+
+      document.querySelectorAll('.kanban-col').forEach(col => {
+        col.addEventListener('dragover', e => { e.preventDefault(); col.classList.add('drag-over'); });
+        col.addEventListener('dragleave', () => col.classList.remove('drag-over'));
+        col.addEventListener('drop', e => {
+          e.preventDefault();
+          col.classList.remove('drag-over');
+          const targetCol = col.getAttribute('data-col');
+          if (draggedCardId && targetCol) {
+            const c = kanbanCards.find(x => x.id === draggedCardId);
+            if (c) { c.column = targetCol; saveKanban(); renderKanban(); showToast('Görev taşındı'); }
+          }
+        });
+      });
+
+      document.getElementById('cardForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const id = document.getElementById('cardId').value;
+        const title = document.getElementById('inputTitle').value.trim();
+        const desc = document.getElementById('inputDesc').value.trim();
+        const phase = document.getElementById('inputPhase').value;
+        const column = document.getElementById('selectColumn').value;
+        if (!title) return;
+        if (id) {
+          const idx = kanbanCards.findIndex(x => x.id === id);
+          if (idx > -1) kanbanCards[idx] = { ...kanbanCards[idx], title, desc, phase, column };
+        } else {
+          kanbanCards.push({ id: 'k-' + Date.now().toString().slice(-4), title, desc, phase, column });
+        }
+        saveKanban();
+        renderKanban();
+        closeCardModal();
+        showToast('Kaydedildi');
+      });
+
+      document.getElementById('btnDeleteCard').addEventListener('click', () => {
+        const id = document.getElementById('cardId').value;
+        kanbanCards = kanbanCards.filter(x => x.id !== id);
+        saveKanban();
+        renderKanban();
+        closeCardModal();
+        showToast('Silindi');
+      });
+    }
+
+    function filterKanban(phaseKey) {
+      currentKanbanPhase = phaseKey;
+      ['ALL', 'proto', 'mvp', 'v2'].forEach(k => {
+        const btn = document.getElementById(`filterBtn-${k}`);
+        if (btn) {
+          if (k === phaseKey) {
+            btn.className = 'kanban-phase-btn px-3 py-1 rounded-lg transition bg-white text-slate-900 shadow-2xs font-extrabold';
+          } else {
+            btn.className = 'kanban-phase-btn px-3 py-1 rounded-lg transition text-slate-600 hover:text-slate-900 font-bold';
+          }
+        }
+      });
+      renderKanban();
+    }
+
+    function saveKanban() {
+      try { localStorage.setItem('etsy_studio_kanban_master_v5', JSON.stringify(kanbanCards)); } catch (e) {}
+    }
+
+    function getPhaseLabel(phase) {
+      if (phase === 'proto') return '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-orange-100 text-orange-800">🎨 1. Mobil Prototip</span>';
+      if (phase === 'mvp') return '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">🚀 2. Çalışan MVP</span>';
+      return '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-100 text-indigo-800">🌟 3. Full Sürüm (V2)</span>';
+    }
+
+    function renderKanban() {
+      const cols = ['backlog', 'todo', 'in_progress', 'done'];
+      const counts = { backlog: 0, todo: 0, in_progress: 0, done: 0 };
+      cols.forEach(c => document.getElementById(`col-${c}`).innerHTML = '');
+
+      const filtered = kanbanCards.filter(c => {
+        const matchPhase = currentKanbanPhase === 'ALL' || c.phase === currentKanbanPhase;
+        const matchSearch = !kanbanSearch || c.title.toLowerCase().includes(kanbanSearch) || c.desc.toLowerCase().includes(kanbanSearch);
+        return matchPhase && matchSearch;
+      });
+
+      filtered.forEach(card => {
+        counts[card.column] = (counts[card.column] || 0) + 1;
+        const colEl = document.getElementById(`col-${card.column}`);
+        if (!colEl) return;
+
+        const el = document.createElement('div');
+        el.className = 'bg-white p-4 rounded-2xl border border-slate-200/90 shadow-2xs hover:shadow-md transition cursor-grab space-y-2.5 select-none';
+        el.draggable = true;
+        el.innerHTML = `
+          <div class="flex items-center justify-between">
+            ${getPhaseLabel(card.phase)}
+            <button onclick="openCardModal('${card.id}')" class="text-slate-400 hover:text-slate-700 text-xs font-bold">Düzenle</button>
+          </div>
+          <h4 class="text-xs font-black text-slate-900 leading-snug">${card.title}</h4>
+          <p class="text-[11px] text-slate-600 leading-relaxed">${card.desc}</p>
+          <div class="pt-2.5 border-t border-slate-100 flex items-center justify-between text-[10px]">
+            <span class="font-mono text-slate-400">#${card.id}</span>
+            <select onchange="quickMoveCard('${card.id}', this.value)" class="bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 font-semibold text-slate-700">
+              <option value="backlog" ${card.column==='backlog'?'selected':''}>1. Havuz</option>
+              <option value="todo" ${card.column==='todo'?'selected':''}>2. Yapılacak</option>
+              <option value="in_progress" ${card.column==='in_progress'?'selected':''}>3. Yapılıyor</option>
+              <option value="done" ${card.column==='done'?'selected':''}>4. Tamamlandı</option>
+            </select>
+          </div>
+        `;
+        el.addEventListener('dragstart', () => { draggedCardId = card.id; el.classList.add('opacity-50'); });
+        el.addEventListener('dragend', () => { draggedCardId = null; el.classList.remove('opacity-50'); });
+        colEl.appendChild(el);
+      });
+
+      cols.forEach(c => document.getElementById(`count-${c}`).textContent = counts[c] || 0);
+      refreshLucideIcons();
+    }
+
+    window.quickMoveCard = function(id, col) {
+      const c = kanbanCards.find(x => x.id === id);
+      if (c) { c.column = col; saveKanban(); renderKanban(); showToast('Durum güncellendi'); }
+    };
+
+    window.openCardModal = function(cardId = null) {
+      const modal = document.getElementById('cardModal');
+      const delBtn = document.getElementById('btnDeleteCard');
+      if (cardId) {
+        const c = kanbanCards.find(x => x.id === cardId);
+        if (!c) return;
+        document.getElementById('cardId').value = c.id;
+        document.getElementById('inputTitle').value = c.title;
+        document.getElementById('inputDesc').value = c.desc;
+        document.getElementById('inputPhase').value = c.phase;
+        document.getElementById('selectColumn').value = c.column;
+        delBtn.classList.remove('hidden');
+      } else {
+        document.getElementById('cardId').value = '';
+        document.getElementById('inputTitle').value = '';
+        document.getElementById('inputDesc').value = '';
+        document.getElementById('inputPhase').value = 'proto';
+        document.getElementById('selectColumn').value = 'todo';
+        delBtn.classList.add('hidden');
+      }
+      modal.classList.remove('hidden');
+    };
+
+    function closeCardModal() {
+      document.getElementById('cardModal').classList.add('hidden');
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastMsg').textContent = msg;
+      toast.classList.remove('opacity-0', 'translate-y-2');
+      toast.classList.add('opacity-100', 'translate-y-0');
+      setTimeout(() => {
+        toast.classList.remove('opacity-100', 'translate-y-0');
+        toast.classList.add('opacity-0', 'translate-y-2');
+      }, 2500);
+    }
+  </script>
+</body>
+</html>
